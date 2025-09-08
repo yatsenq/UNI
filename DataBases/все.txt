@@ -1,0 +1,442 @@
+-- Creating domains
+CREATE DOMAIN date_type AS DATE
+CONSTRAINT date_type_check CHECK (
+    VALUE IS NOT NULL 
+    AND VALUE >= '1900-01-01'
+    AND VALUE <= '2100-12-31'
+);
+
+CREATE DOMAIN email_type AS VARCHAR(255)
+CONSTRAINT email_type_check CHECK (
+    VALUE ~ '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+);
+
+CREATE DOMAIN status_type AS VARCHAR(20)
+CONSTRAINT status_type_check CHECK (
+    VALUE IN ('Active', 'Suspended', 'Completed', 'Cancelled')
+);
+
+CREATE DOMAIN currency_type AS VARCHAR(3)
+CONSTRAINT currency_type_check CHECK (
+    VALUE IN ('USD', 'EUR', 'UAH', 'GBP', 'JPY')
+);
+
+CREATE DOMAIN insurance_type AS VARCHAR(50)
+CONSTRAINT insurance_type_check CHECK (
+    VALUE IN ('Health', 'Vehicle', 'Property', 'Life', 'Liability')
+);
+
+CREATE DOMAIN gender_type AS VARCHAR(1)
+CONSTRAINT gender_type_check CHECK (
+    VALUE IN ('M', 'F')
+);
+
+CREATE DOMAIN money_amount AS DECIMAL(12, 2)
+CONSTRAINT money_amount_check CHECK (
+    VALUE >= 0
+);
+
+CREATE DOMAIN phone_number AS VARCHAR(15)
+CONSTRAINT phone_number_check CHECK (
+    VALUE ~ '^\+?[0-9]{10,13}$'
+);
+
+-- Creating tables
+CREATE TABLE PERSON_CHARACTERISTICS (
+    PERSON_ID SERIAL PRIMARY KEY,
+    GENDER gender_type NOT NULL,
+    BIRTH_DATE date_type NOT NULL,
+    EMAIL email_type UNIQUE,
+    PHONE_NUMBER phone_number UNIQUE,
+    FIRST_NAME VARCHAR(50),
+    LAST_NAME VARCHAR(50),
+    CONSTRAINT email_check CHECK (EMAIL IS NULL OR EMAIL ~ '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
+);
+
+CREATE TABLE PROPERTY_CHARACTERISTICS (
+    PROPERTY_ID SERIAL PRIMARY KEY,
+    DESCRIPTION TEXT,
+    VALUE money_amount NOT NULL,
+    YEAR_OF_ISSUE INTEGER,
+    LOCATION VARCHAR(255) NOT NULL,
+    CURRENCY currency_type NOT NULL
+);
+
+CREATE TABLE AGREEMENT (
+    AGREEMENT_ID SERIAL PRIMARY KEY,
+    CONCLUSION_DATE date_type NOT NULL,
+    STATUS status_type NOT NULL,
+    TOTAL_INSURANCE_AMOUNT money_amount NOT NULL,
+    DURATION INTEGER NOT NULL,
+    CONSTRAINT positive_duration CHECK (DURATION > 0)
+);
+
+CREATE TABLE INSURED (
+    INSURED_ID SERIAL PRIMARY KEY,
+    ADDRESS VARCHAR(255) NOT NULL,
+    PHONE_NUMBER phone_number NOT NULL UNIQUE,
+    GENDER gender_type NOT NULL,
+    BIRTH_DATE date_type NOT NULL,
+    PERSON_ID INTEGER NOT NULL REFERENCES PERSON_CHARACTERISTICS(PERSON_ID),
+    EMAIL email_type UNIQUE,
+    CONSTRAINT insured_person_unique UNIQUE (PERSON_ID)
+);
+
+CREATE TABLE INSURANCE_OBJECT (
+    OBJECT_ID SERIAL PRIMARY KEY,
+    OBJECT_TYPE insurance_type NOT NULL,
+    INSURED_ID INTEGER NOT NULL REFERENCES INSURED(INSURED_ID),
+    PROPERTY_ID INTEGER REFERENCES PROPERTY_CHARACTERISTICS(PROPERTY_ID)
+);
+
+CREATE TABLE INSURANCE_POLICY (
+    POLICY_ID SERIAL PRIMARY KEY,
+    START_DATE date_type NOT NULL,
+    END_DATE date_type NOT NULL,
+    INSURANCE_AMOUNT money_amount NOT NULL,
+    INSURED_ID INTEGER NOT NULL REFERENCES INSURED(INSURED_ID),
+    AGREEMENT_ID INTEGER NOT NULL REFERENCES AGREEMENT(AGREEMENT_ID),
+    CONSTRAINT dates_check CHECK (END_DATE > START_DATE),
+    CONSTRAINT policy_unique UNIQUE (INSURED_ID, AGREEMENT_ID)
+);
+
+-- ІМПОРТ ДАНИХ
+DELETE FROM INSURANCE_POLICY;
+DELETE FROM INSURANCE_OBJECT;
+DELETE FROM AGREEMENT;
+DELETE FROM INSURED;
+DELETE FROM PROPERTY_CHARACTERISTICS;
+DELETE FROM PERSON_CHARACTERISTICS;
+
+-- Скидання послідовностей для автоінкременту (якщо потрібно)
+ALTER SEQUENCE person_characteristics_person_id_seq RESTART WITH 1;
+ALTER SEQUENCE property_characteristics_property_id_seq RESTART WITH 1;
+ALTER SEQUENCE insured_insured_id_seq RESTART WITH 1;
+ALTER SEQUENCE agreement_agreement_id_seq RESTART WITH 1;
+ALTER SEQUENCE insurance_object_object_id_seq RESTART WITH 1;
+ALTER SEQUENCE insurance_policy_policy_id_seq RESTART WITH 1;
+
+
+-- 1. Імпортуємо дані для PERSON_CHARACTERISTICS
+COPY PERSON_CHARACTERISTICS (PERSON_ID, GENDER, BIRTH_DATE, EMAIL, PHONE_NUMBER, FIRST_NAME, LAST_NAME) FROM 'D:/PROGRAM/MyProject/TA/insurance_data/person_characteristics.csv' WITH CSV HEADER;
+
+-- 2. Імпортуємо дані для PROPERTY_CHARACTERISTICS
+COPY PROPERTY_CHARACTERISTICS (PROPERTY_ID, DESCRIPTION, VALUE, YEAR_OF_ISSUE, LOCATION, CURRENCY) FROM 'D:/PROGRAM/MyProject/TA/insurance_data/property_characteristics.csv' WITH CSV HEADER; -- good
+
+-- 3. Імпортуємо дані для INSURED
+COPY INSURED (INSURED_ID, ADDRESS, PHONE_NUMBER, GENDER, BIRTH_DATE, PERSON_ID, EMAIL) FROM 'D:/PROGRAM/MyProject/TA/insurance_data/insured.csv' WITH CSV HEADER;
+
+-- 4. Імпортуємо дані для AGREEMENT
+COPY AGREEMENT (AGREEMENT_ID, CONCLUSION_DATE, STATUS, TOTAL_INSURANCE_AMOUNT, DURATION) FROM 'D:/PROGRAM/MyProject/TA/insurance_data/agreement.csv' WITH CSV HEADER; -- good
+
+-- 5. Імпортуємо дані для INSURANCE_OBJECT
+COPY INSURANCE_OBJECT (OBJECT_ID, OBJECT_TYPE, INSURED_ID, PROPERTY_ID) FROM 'D:/PROGRAM/MyProject/TA/insurance_data/insurance_object.csv' WITH CSV HEADER;
+
+-- 6. Імпортуємо дані для INSURANCE_POLICY
+COPY INSURANCE_POLICY (POLICY_ID, START_DATE, END_DATE, INSURANCE_AMOUNT, INSURED_ID, AGREEMENT_ID) FROM 'D:/PROGRAM/MyProject/TA/insurance_data/insurance_policy.csv' WITH CSV HEADER;
+
+-- Оновити послідовності для автоінкременту після імпорту (якщо потрібно)
+SELECT setval('person_characteristics_person_id_seq', (SELECT MAX(PERSON_ID) FROM PERSON_CHARACTERISTICS));
+SELECT setval('property_characteristics_property_id_seq', (SELECT MAX(PROPERTY_ID) FROM PROPERTY_CHARACTERISTICS));
+SELECT setval('insured_insured_id_seq', (SELECT MAX(INSURED_ID) FROM INSURED));
+SELECT setval('agreement_agreement_id_seq', (SELECT MAX(AGREEMENT_ID) FROM AGREEMENT));
+SELECT setval('insurance_object_object_id_seq', (SELECT MAX(OBJECT_ID) FROM INSURANCE_OBJECT));
+SELECT setval('insurance_policy_policy_id_seq', (SELECT MAX(POLICY_ID) FROM INSURANCE_POLICY));
+
+-- Скрипт для перевірки кількості імпортованих записів
+SELECT 'PERSON_CHARACTERISTICS' AS table_name, COUNT(*) AS row_count FROM PERSON_CHARACTERISTICS
+UNION ALL
+SELECT 'PROPERTY_CHARACTERISTICS', COUNT(*) FROM PROPERTY_CHARACTERISTICS
+UNION ALL
+SELECT 'INSURED', COUNT(*) FROM INSURED
+UNION ALL
+SELECT 'AGREEMENT', COUNT(*) FROM AGREEMENT
+UNION ALL
+SELECT 'INSURANCE_OBJECT', COUNT(*) FROM INSURANCE_OBJECT
+UNION ALL
+SELECT 'INSURANCE_POLICY', COUNT(*) FROM INSURANCE_POLICY;
+
+-- ІНДЕКСИ
+
+-- Видалення існуючих індексів
+DROP INDEX IF EXISTS idx_policy_amount;
+DROP INDEX IF EXISTS idx_person_full_name;
+DROP INDEX IF EXISTS idx_property_value_desc;
+DROP INDEX IF EXISTS idx_object_type;
+DROP INDEX IF EXISTS idx_insured_id;
+DROP INDEX IF EXISTS idx_property_currency;
+DROP INDEX IF EXISTS idx_policy_agreement_id;
+DROP INDEX IF EXISTS idx_agreement_year_quarter_func;
+DROP INDEX IF EXISTS idx_policy_dates_amount;
+
+-- Створення оптимізованих індексів для запитів
+-- 1. Для запиту з діапазоном дат та високими сумами страхування
+CREATE INDEX idx_policy_dates_amount ON INSURANCE_POLICY(START_DATE, END_DATE, INSURANCE_AMOUNT DESC);
+
+-- 2. Для пошуку особи за ім'ям та прізвищем
+CREATE INDEX idx_person_full_name ON PERSON_CHARACTERISTICS(FIRST_NAME, LAST_NAME);
+
+-- 3. Для сортування нерухомості за вартістю
+CREATE INDEX idx_property_value_desc ON PROPERTY_CHARACTERISTICS(VALUE DESC);
+
+-- 4. Для складного запиту з JOIN та фільтрацією
+CREATE INDEX idx_object_type ON INSURANCE_OBJECT(OBJECT_TYPE);
+CREATE INDEX idx_insured_id ON INSURANCE_OBJECT(INSURED_ID);
+CREATE INDEX idx_property_currency ON PROPERTY_CHARACTERISTICS(CURRENCY);
+CREATE INDEX idx_policy_amount ON INSURANCE_POLICY(INSURANCE_AMOUNT);
+
+-- 5. Для аналітики на основі дат
+CREATE INDEX idx_policy_agreement_id ON INSURANCE_POLICY(AGREEMENT_ID);
+CREATE INDEX idx_agreement_year_quarter_func ON AGREEMENT(
+    (EXTRACT(YEAR FROM CONCLUSION_DATE)::integer),
+    (EXTRACT(QUARTER FROM CONCLUSION_DATE)::integer)
+);
+
+-- Запит 1: Діапазон дат із високими сумами
+EXPLAIN ANALYZE
+SELECT p.POLICY_ID, p.START_DATE, p.END_DATE, p.INSURANCE_AMOUNT, 
+       i.ADDRESS, pc.FIRST_NAME, pc.LAST_NAME
+FROM INSURANCE_POLICY p
+JOIN INSURED i ON p.INSURED_ID = i.INSURED_ID
+JOIN PERSON_CHARACTERISTICS pc ON i.PERSON_ID = pc.PERSON_ID
+WHERE p.START_DATE >= '2024-01-01' 
+  AND p.END_DATE <= '2024-12-31'
+  AND p.INSURANCE_AMOUNT > 10000000.00
+ORDER BY p.INSURANCE_AMOUNT DESC
+LIMIT 100;
+
+-- Запит 2: Пошук особи за ім'ям та прізвищем
+EXPLAIN ANALYZE
+SELECT * FROM PERSON_CHARACTERISTICS
+WHERE FIRST_NAME = 'Максим' AND LAST_NAME = 'Дмитренко';  -- використовує idx_person_full_name
+
+-- Запит 3: Список найдорожчих об'єктів нерухомості
+EXPLAIN ANALYZE
+SELECT * FROM PROPERTY_CHARACTERISTICS
+ORDER BY VALUE DESC  -- використовує idx_property_value_desc
+LIMIT 100;
+
+-- Запит 4: Складний запит з JOIN та фільтрацією
+EXPLAIN ANALYZE
+SELECT pc.FIRST_NAME, pc.LAST_NAME, pc.EMAIL, pc.PHONE_NUMBER,
+       i.ADDRESS, p.VALUE, p.CURRENCY, ip.INSURANCE_AMOUNT
+FROM PERSON_CHARACTERISTICS pc
+JOIN INSURED i ON pc.PERSON_ID = i.PERSON_ID
+JOIN INSURANCE_OBJECT io ON i.INSURED_ID = io.INSURED_ID
+JOIN PROPERTY_CHARACTERISTICS p ON io.PROPERTY_ID = p.PROPERTY_ID
+JOIN INSURANCE_POLICY ip ON i.INSURED_ID = ip.INSURED_ID
+WHERE io.OBJECT_TYPE = 'Property'  -- використовує idx_object_type
+  AND ip.INSURANCE_AMOUNT = 2000000.00  -- використовує idx_policy_amount
+  AND p.CURRENCY = 'UAH';  -- використовує idx_property_currency
+
+-- Запит 5: Аналітика за датами
+EXPLAIN ANALYZE
+SELECT 
+    2024 AS year,
+    1 AS quarter,
+    COUNT(a.AGREEMENT_ID) AS agreements_count, 
+    SUM(ip.INSURANCE_AMOUNT) AS total_insurance_amount
+FROM AGREEMENT a
+JOIN INSURANCE_POLICY ip ON a.AGREEMENT_ID = ip.AGREEMENT_ID  -- використовує idx_policy_agreement_id
+WHERE EXTRACT(YEAR FROM a.CONCLUSION_DATE)::integer = 2024  -- використовує idx_agreement_year_quarter_func
+  AND EXTRACT(QUARTER FROM a.CONCLUSION_DATE)::integer = 1;
+
+
+-- ФУНКЦІЇ
+CREATE OR REPLACE FUNCTION get_customer_by_id(customer_id INTEGER) 
+RETURNS VARCHAR AS $$
+DECLARE
+    customer_info VARCHAR;
+BEGIN
+    SELECT 
+        CONCAT(FIRST_NAME, ' ', LAST_NAME, ' (', EMAIL, ')')
+    INTO customer_info
+    FROM PERSON_CHARACTERISTICS
+    WHERE PERSON_ID = customer_id;
+    
+    RETURN customer_info;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT PERSON_ID, FIRST_NAME, LAST_NAME, EMAIL FROM PERSON_CHARACTERISTICS;
+SELECT get_customer_by_id(7);
+
+SELECT 
+    p.POLICY_ID, 
+    io.OBJECT_TYPE AS insurance_type,
+    pc.FIRST_NAME, 
+    pc.LAST_NAME, 
+    p.START_DATE, 
+    p.END_DATE, 
+    p.INSURANCE_AMOUNT, 
+    a.STATUS
+FROM INSURANCE_POLICY p
+JOIN INSURED i ON p.INSURED_ID = i.INSURED_ID
+JOIN PERSON_CHARACTERISTICS pc ON i.PERSON_ID = pc.PERSON_ID
+JOIN AGREEMENT a ON p.AGREEMENT_ID = a.AGREEMENT_ID
+JOIN INSURANCE_OBJECT io ON i.INSURED_ID = io.INSURED_ID
+ORDER BY io.OBJECT_TYPE, p.POLICY_ID;
+
+CREATE TYPE active_policies AS (
+    POLICY_ID INTEGER,
+    START_DATE date_type,
+    END_DATE date_type,
+    INSURANCE_AMOUNT money_amount,
+    ADDRESS VARCHAR,
+    GENDER gender_type,
+    BIRTH_DATE date_type,
+    EMAIL email_type,
+    STATUS status_type
+);
+
+CREATE OR REPLACE FUNCTION get_active_policies_by_type(insurance_type_param insurance_type) 
+RETURNS SETOF active_policies AS $$
+BEGIN
+    RETURN QUERY
+    SELECT p.POLICY_ID, p.START_DATE, p.END_DATE, p.INSURANCE_AMOUNT, 
+           i.ADDRESS, pc.GENDER, pc.BIRTH_DATE, pc.EMAIL, a.STATUS
+    FROM INSURANCE_POLICY p
+    JOIN INSURED i ON p.INSURED_ID = i.INSURED_ID
+    JOIN PERSON_CHARACTERISTICS pc ON i.PERSON_ID = pc.PERSON_ID
+    JOIN AGREEMENT a ON p.AGREEMENT_ID = a.AGREEMENT_ID
+    JOIN INSURANCE_OBJECT io ON i.INSURED_ID = io.INSURED_ID
+    WHERE a.STATUS = 'Active' AND io.OBJECT_TYPE = insurance_type_param;
+END;
+$$ LANGUAGE plpgsql;
+
+
+SELECT * FROM get_active_policies_by_type('Vehicle');
+
+SELECT 
+    pc.PERSON_ID,
+    pc.FIRST_NAME,
+    pc.LAST_NAME,
+    pc.BIRTH_DATE,
+    EXTRACT(YEAR FROM AGE(CURRENT_DATE, pc.BIRTH_DATE)) AS age
+FROM PERSON_CHARACTERISTICS pc
+ORDER BY age;
+
+
+CREATE OR REPLACE FUNCTION get_clients_by_age_range(min_age INTEGER, max_age INTEGER) 
+RETURNS TABLE (
+    client_id INTEGER,
+    full_name TEXT,
+    age INTEGER,
+    gender gender_type,
+    policies_count BIGINT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        pc.PERSON_ID AS client_id,
+        CONCAT(pc.FIRST_NAME, ' ', pc.LAST_NAME) AS full_name,
+        EXTRACT(YEAR FROM AGE(CURRENT_DATE, pc.BIRTH_DATE))::INTEGER AS age,
+        pc.GENDER,
+        COUNT(DISTINCT ip.POLICY_ID) AS policies_count
+    FROM PERSON_CHARACTERISTICS pc
+    LEFT JOIN INSURED i ON pc.PERSON_ID = i.PERSON_ID
+    LEFT JOIN INSURANCE_POLICY ip ON i.INSURED_ID = ip.INSURED_ID
+    WHERE EXTRACT(YEAR FROM AGE(CURRENT_DATE, pc.BIRTH_DATE)) BETWEEN min_age AND max_age
+    GROUP BY pc.PERSON_ID, pc.FIRST_NAME, pc.LAST_NAME, pc.GENDER, pc.BIRTH_DATE
+    ORDER BY age, full_name;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT * FROM get_clients_by_age_range(1, 50);
+
+
+
+-- ВИГЛЯД
+-- 1
+CREATE OR REPLACE VIEW v_insured_house_2m AS
+SELECT *
+FROM INSURANCE_POLICY
+WHERE INSURANCE_AMOUNT = 2000000.00
+WITH CHECK OPTION;
+
+SELECT * FROM v_insured_house_2m;
+
+UPDATE v_insured_house_2m
+SET START_DATE = '2018-02-09'
+WHERE POLICY_ID = 1;
+
+SELECT * FROM v_insured_house_2m;
+	
+-- порушує умову CHECK OPTION
+-- має викликати помилку
+UPDATE v_insured_house_2m
+SET INSURANCE_AMOUNT = 1900000.00
+WHERE POLICY_ID = 1;
+
+-- 2
+CREATE OR REPLACE VIEW v_quarterly_insurance_stats AS
+SELECT 
+    EXTRACT(YEAR FROM a.CONCLUSION_DATE) AS year,
+    EXTRACT(QUARTER FROM a.CONCLUSION_DATE) AS quarter,
+    COUNT(a.AGREEMENT_ID) AS agreements_count,
+    SUM(ip.INSURANCE_AMOUNT) AS total_insurance_amount
+FROM AGREEMENT a
+JOIN INSURANCE_POLICY ip ON a.AGREEMENT_ID = ip.AGREEMENT_ID
+WHERE EXTRACT(YEAR FROM a.CONCLUSION_DATE) = 2024
+  AND EXTRACT(QUARTER FROM a.CONCLUSION_DATE) = 2
+GROUP BY year, quarter;
+
+SELECT * FROM v_quarterly_insurance_stats;
+
+
+-- має викликати помилку
+UPDATE v_quarterly_insurance_stats
+SET agreements_count = 10
+WHERE year = 2024 AND quarter = 1;
+
+-- 3
+CREATE MATERIALIZED VIEW mv_lowest_insurance_info AS
+SELECT 
+    pc.PERSON_ID,
+    pc.FIRST_NAME,
+    pc.LAST_NAME,
+    i.INSURED_ID,
+    pc.EMAIL,
+    pc.PHONE_NUMBER,
+    p.PROPERTY_ID,
+    p.DESCRIPTION AS property_description,
+    p.VALUE AS property_value,
+    io.OBJECT_TYPE,
+    ip.POLICY_ID,
+    ip.INSURANCE_AMOUNT
+FROM PERSON_CHARACTERISTICS pc
+JOIN INSURED i ON pc.PERSON_ID = i.PERSON_ID
+JOIN INSURANCE_OBJECT io ON i.INSURED_ID = io.INSURED_ID
+JOIN PROPERTY_CHARACTERISTICS p ON io.PROPERTY_ID = p.PROPERTY_ID
+JOIN INSURANCE_POLICY ip ON i.INSURED_ID = ip.INSURED_ID
+WHERE ip.INSURANCE_AMOUNT = (
+    SELECT MIN(INSURANCE_AMOUNT)
+    FROM INSURANCE_POLICY
+);
+SELECT * FROM mv_lowest_insurance_info;
+
+UPDATE INSURANCE_POLICY
+SET INSURANCE_AMOUNT = 5000.00
+WHERE POLICY_ID = 6;
+
+-- дані не оновлюються автоматично
+SELECT * FROM mv_lowest_insurance_info;
+
+-- оновлюємо матеріалізоване представлення
+REFRESH MATERIALIZED VIEW mv_lowest_insurance_info;
+
+SELECT * FROM mv_lowest_insurance_info;
+
+UPDATE INSURANCE_POLICY
+SET INSURANCE_AMOUNT = 50000.00
+WHERE POLICY_ID = 7;
+
+SELECT * FROM INSURANCE_POLICY;
+SELECT * FROM PERSON_CHARACTERISTICS WHERE PERSON_ID IN (SELECT PERSON_ID FROM v_insured_house_2m);
+
+
+
+
+
+
+
