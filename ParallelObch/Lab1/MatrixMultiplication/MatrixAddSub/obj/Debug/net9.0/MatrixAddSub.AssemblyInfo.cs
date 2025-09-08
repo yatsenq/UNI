@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MatrixAddSub")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3628953a1f9a8892b86667a071edd53017cee0a0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+06568889093758adb9eef1befe7a1db995978ccf")]
 [assembly: System.Reflection.AssemblyProductAttribute("MatrixAddSub")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MatrixAddSub")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
