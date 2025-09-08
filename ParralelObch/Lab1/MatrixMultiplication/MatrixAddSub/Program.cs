@@ -1,0 +1,165 @@
+﻿using System;
+using System.Diagnostics;
+using System.Text;
+using System.Threading.Tasks;
+
+class Program
+{
+    static void PoslAddition(int[,] A, int[,] B, int[,] result)
+    {
+        int n = A.GetLength(0);
+        int m = A.GetLength(1);
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                result[i, j] = A[i, j] + B[i, j];
+            }
+        }
+    }
+    static void PoslSubstraction(int[,] A, int[,] B, int[,] result)
+    {
+        int n = A.GetLength(0);
+        int m = A.GetLength(1);
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                result[i, j] = A[i, j] - B[i, j];
+            }
+        }
+    }
+
+    static void ParallelAddition(int[,] A, int[,] B, int[,] C, int k)
+    {
+        int n = A.GetLength(0);
+        int m = A.GetLength(1);
+
+        int rowsPerTask = n / k;
+        int remainingRows = n % k;
+
+        Task[] tasks = new Task[k];
+
+        int startRow = 0;
+        for(int t = 0; t < k; t++)
+        {
+            int rows = rowsPerTask;
+            if (t < remainingRows)
+            {
+                rows += 1;
+            }
+
+            int sRow = startRow;
+            tasks[t] = Task.Run(() =>
+            {
+                for (int i = sRow; i < sRow + rows; i++)
+                {
+                    for (int j = 0; j < m; j++)
+                    {
+                        C[i, j] = A[i, j] + B[i, j];
+                    }
+                }
+            });
+            startRow += rows;
+        }
+        Task.WaitAll(tasks);
+    }
+    
+    static void ParallelSubstraction(int[,] A, int[,] B, int[,] D, int k)
+    {
+        int n = A.GetLength(0);
+        int m = A.GetLength(1);
+
+        int rowsPerTask = n / k;
+        int remainingRows = n % k;
+
+        Task[] tasks = new Task[k];
+
+        int startRow = 0;
+        for(int t = 0; t < k; t++)
+        {
+            int rows = rowsPerTask;
+            if (t < remainingRows)
+            {
+                rows += 1;
+            }
+
+            int sRow = startRow;
+            tasks[t] = Task.Run(() =>
+            {
+                for (int i = sRow; i < sRow + rows; i++)
+                {
+                    for (int j = 0; j < m; j++)
+                    {
+                        D[i, j] = A[i, j] - B[i, j];
+                    }
+                }
+            });
+            startRow += rows;
+        }
+        Task.WaitAll(tasks);
+    }
+    
+
+    static void Main()
+    {
+
+        Console.OutputEncoding = System.Text.Encoding.UTF8;
+        
+        int n = 15000;
+        int m = 15000;
+        int k = 8;
+
+        int[,] A = new int[n, m];
+        int[,] B = new int[n, m];
+        int[,] C = new int[n, m];
+        int[,] D = new int[n, m];
+         
+        Random rnd = new Random();
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                A[i, j] = rnd.Next(0, 101);
+                B[i, j] = rnd.Next(0, 101);   
+            }
+        }
+
+        Stopwatch sw = new Stopwatch();
+        
+        sw.Start();
+        PoslAddition(A,B,C);
+        sw.Stop();
+        double time_posl_add = sw.ElapsedMilliseconds;
+        Console.WriteLine($"Час затрачений на ПОСЛІДОВНЕ додавання: {time_posl_add}ms");
+        
+        sw.Restart();
+        ParallelAddition(A,B,C,k);
+        sw.Stop();
+        double time_parl_add = sw.ElapsedMilliseconds;
+        Console.WriteLine($"Час затрачений на ПАРАЛЕЛЬНЕ додавання: {time_parl_add}ms");
+
+        double speedup_add = time_posl_add / time_parl_add;
+        double efficiency_add = speedup_add / k;
+        Console.WriteLine($"Прискорення (додавання): {speedup_add:F2}x"); 
+        Console.WriteLine($"Ефективність (додавання): {efficiency_add:P2}\n");
+        
+        sw.Restart();
+        PoslSubstraction(A,B,C);
+        sw.Stop();
+        double time_posl_subs = sw.ElapsedMilliseconds;
+        Console.WriteLine($"Час затрачений на ПОСЛІДОВНЕ віднімання: {time_posl_subs}ms");
+        
+        sw.Restart();
+        ParallelSubstraction(A,B,D,k);
+        sw.Stop();
+        double time_parl_subs = sw.ElapsedMilliseconds;
+        Console.WriteLine($"Час затрачений на ПАРАЛЕЛЬНЕ віднімання: {time_parl_add}ms");
+        
+        double speedup_subs = time_posl_subs / time_parl_subs;
+        double efficiency_subs = speedup_subs / k;
+        Console.WriteLine($"Прискорення (віднімання): {speedup_subs:F2}x"); 
+        Console.WriteLine($"Ефективність (віднімання): {efficiency_subs:P2}");
+
+    }
+}
