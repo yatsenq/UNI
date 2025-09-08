@@ -109,27 +109,20 @@ class Program
         }
     }
 
-    static int ReadInt(string prompt, int min = 1, int max = int.MaxValue)
-    {
-        while (true)
-        {
-            Console.Write(prompt);
-            if (int.TryParse(Console.ReadLine(), out int value) && value >= min && value <= max)
-                return value;
-            Console.WriteLine($"Невірне значення. Дозволено: {min}..{max}");
-        }
-    }
-
     static void Main()
     {
         Console.OutputEncoding = Encoding.UTF8;
 
         DemoSmallAdd();
-        
-        int n = ReadInt("Введіть кількість рядків (n): ", 1);
-        int m = ReadInt("Введіть кількість стовпців (m): ", 1);
-        int k = ReadInt($"Введіть кількість потоків (k, 1..{Environment.ProcessorCount * 2}): ",
-                        1, Environment.ProcessorCount * 2);
+
+        Console.Write("Введіть кількість рядків (n): ");
+        int n = int.Parse(Console.ReadLine()!);
+
+        Console.Write("Введіть кількість стовпців (m): ");
+        int m = int.Parse(Console.ReadLine()!);
+
+        Console.Write($"Введіть кількість потоків (k, 1..{Environment.ProcessorCount * 2}): ");
+        int k = int.Parse(Console.ReadLine()!);
 
         int[,] A = new int[n, m];
         int[,] B = new int[n, m];
