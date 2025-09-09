@@ -16,8 +16,6 @@ DECLARE
         WHERE io.OBJECT_TYPE = type_param;
 BEGIN
     total_count := 0;
-
-    -- Перевірка наявності записів
     PERFORM 1
     FROM INSURANCE_POLICY ip
     JOIN INSURANCE_OBJECT io ON ip.INSURED_ID = io.INSURED_ID
@@ -45,7 +43,7 @@ END;
 $$;
 
 -- ==============================
--- 2. Призупинення договорів з малою сумою
+-- 2. Призупинення договорів з малою сумою (без EXECUTE)
 -- ==============================
 CREATE OR REPLACE PROCEDURE suspend_low_amount_agreements(
     IN min_amount money_amount
@@ -66,10 +64,13 @@ BEGIN
         EXIT WHEN NOT FOUND;
 
         IF v_agreement.total_sum < min_amount THEN
-            -- Використовуємо EXECUTE для оновлення
-            EXECUTE format('UPDATE AGREEMENT SET STATUS = ''Suspended'' WHERE AGREEMENT_ID = %s', v_agreement.AGREEMENT_ID);
+            -- звичайний UPDATE без EXECUTE
+            UPDATE AGREEMENT
+            SET STATUS = 'Suspended'
+            WHERE AGREEMENT_ID = v_agreement.AGREEMENT_ID;
 
-            RAISE NOTICE 'Договір % призупинено (сума = %)', v_agreement.AGREEMENT_ID, v_agreement.total_sum;
+            RAISE NOTICE 'Договір % призупинено (сума = %)',
+                v_agreement.AGREEMENT_ID, v_agreement.total_sum;
         END IF;
     END LOOP;
     CLOSE cur;
@@ -79,6 +80,7 @@ EXCEPTION
         RAISE WARNING 'Сталася помилка у suspend_low_amount_agreements: %', SQLERRM;
 END;
 $$;
+
 
 -- ==============================
 -- 3. Середня сума полісів за типом
@@ -99,7 +101,6 @@ DECLARE
         JOIN INSURANCE_OBJECT io ON p.INSURED_ID = io.INSURED_ID
         WHERE io.OBJECT_TYPE = insurance_type_param;
 BEGIN
-    -- Перевірка наявності полісів через PERFORM
     PERFORM 1
     FROM INSURANCE_POLICY p
     JOIN INSURANCE_OBJECT io ON p.INSURED_ID = io.INSURED_ID
@@ -146,7 +147,7 @@ CALL suspend_low_amount_agreements(200000);
 
 SELECT AGREEMENT_ID, STATUS, TOTAL_INSURANCE_AMOUNT
 FROM AGREEMENT
-WHERE STATUS = 'Suspended'
+--WHERE STATUS = 'Suspended'
 ORDER BY AGREEMENT_ID;
 
 

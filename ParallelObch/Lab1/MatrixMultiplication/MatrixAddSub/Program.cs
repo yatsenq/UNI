@@ -121,7 +121,7 @@ class Program
         Console.Write("Введіть кількість стовпців (m): ");
         int m = int.Parse(Console.ReadLine()!);
 
-        Console.Write($"Введіть кількість потоків (k, 1..{Environment.ProcessorCount * 2}): ");
+        Console.Write($"Введіть кількість потоків (k, 1..{Environment.ProcessorCount}): ");
         int k = int.Parse(Console.ReadLine()!);
 
         int[,] A = new int[n, m];
