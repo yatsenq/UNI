@@ -7,6 +7,7 @@ class Program
     static int[,] A, B, Cseq, Cpar;
     static int n, m, p, k;
     static Thread[] threads;
+    static long[] threadOperations;
 
     static void SeqMultiply()
     {
@@ -27,6 +28,7 @@ class Program
     static void ParlMultiply()
     {
         threads = new Thread[k];
+        threadOperations = new long[k];
         int rowsPerThread = n / k;
         int remainingRows = n % k;
         int startRow = 0;
@@ -41,9 +43,12 @@ class Program
 
             int sRow = startRow;
             int eRow = sRow + rows;
+            int threadId = t;
 
             threads[t] = new Thread(() =>
             {
+                long operations = 0;
+                
                 for (int i = sRow; i < eRow; i++)
                 {
                     for (int j = 0; j < p; j++)
@@ -52,10 +57,13 @@ class Program
                         for (int x = 0; x < m; x++)
                         {
                             sum += A[i, x] * B[x, j];
+                            operations++;
                         }
                         Cpar[i, j] = sum;
                     }
                 }
+                
+                threadOperations[threadId] = operations;
             });
             
             threads[t].Start();
@@ -125,36 +133,60 @@ class Program
         int extraRows = n % k;
         Console.WriteLine($"\nРозподіл рядків: {baseRows} базових + {extraRows} додаткових");
 
-        var sw = Stopwatch.StartNew();
-        SeqMultiply();
-        sw.Stop();
-        double tSeq = sw.Elapsed.TotalMilliseconds;
-        Console.WriteLine($"\nЧас послідовного множення: {tSeq:F2} ms");
+        const int runs = 3;
+        double bestSeqTime = double.MaxValue;
+        double bestParTime = double.MaxValue;
         
-        sw.Restart();
-        ParlMultiply();
-        sw.Stop();
-        double tPar = sw.Elapsed.TotalMilliseconds;
-        Console.WriteLine($"Час паралельного множення: {tPar:F2} ms");
+        Console.WriteLine($"\nВиконання {runs} прогонів для найкращого результату...");
+        
+        for (int run = 1; run <= runs; run++)
+        {
+            Console.WriteLine($"Прогон {run}/{runs}:");
+            
+            var sw = Stopwatch.StartNew();
+            SeqMultiply();
+            sw.Stop();
+            double tSeq = sw.Elapsed.TotalMilliseconds;
+            if (tSeq < bestSeqTime) bestSeqTime = tSeq;
+            
+            sw.Restart();
+            ParlMultiply();
+            sw.Stop();
+            double tPar = sw.Elapsed.TotalMilliseconds;
+            if (tPar < bestParTime) bestParTime = tPar;
+            
+            Console.WriteLine($"  Послідовно: {tSeq:F2} ms, Паралельно: {tPar:F2} ms");
+            
+            if (run == 1)
+            {
+                if (!VerifyResults())
+                {
+                    Console.WriteLine("ПОМИЛКА: Результати не співпадають!");
+                    return;
+                }
+            }
+        }
 
-        if (VerifyResults())
+        Console.WriteLine($"\nНайкращі результати:");
+        Console.WriteLine($"Час послідовного множення: {bestSeqTime:F2} ms");
+        Console.WriteLine($"Час паралельного множення: {bestParTime:F2} ms");
+        Console.WriteLine("Результати співпадають");
+        
+        long totalOperations = threadOperations.Sum();
+        Console.WriteLine($"\nСтатистика операцій:");
+        Console.WriteLine($"Загальна кількість операцій: {totalOperations:N0}");
+        for (int i = 0; i < k; i++)
         {
-            Console.WriteLine("✓ Результати співпадають");
-        }
-        else
-        {
-            Console.WriteLine("✗ ПОМИЛКА: Результати не співпадають!");
-            return;
+            Console.WriteLine($"Потік {i + 1}: {threadOperations[i]:N0} операцій");
         }
         
-        double speedup = tSeq / tPar;
+        double speedup = bestSeqTime / bestParTime;
         double efficiency = speedup / k;
         double theoreticalMax = k;  
         
-        Console.WriteLine($"Прискорення: {speedup:F2}×");
+        Console.WriteLine($"\nПрискорення: {speedup:F2}×");
         Console.WriteLine($"Теоретичний максимум: {theoreticalMax:F2}×");
         Console.WriteLine($"Ефективність: {efficiency:P1}");
-        Console.WriteLine($"Досягнуто від максимуму: {(speedup/theoreticalMax):P1}");
 
         double realP = (1 / speedup - 1) / (1.0 / k - 1);
         if (realP >= 0 && realP <= 1)
@@ -164,11 +196,11 @@ class Program
             if (realP < 0.999)
             {
                 double amdahlMax = 1.0 / (1.0 - realP);
-                Console.WriteLine($"Максимум за Амдалем (∞ потоків): {amdahlMax:F2}×");
+                Console.WriteLine($"Максимум прискорення за Амдалем (∞ потоків): {amdahlMax:F2}×");
             }
             else
             {
-                Console.WriteLine($"Максимум за Амдалем (∞ потоків): >1000× (майже ідеальна паралелізація)");
+                Console.WriteLine($"Максимум прискорення за Амдалем (∞ потоків): >1000× (майже ідеальна паралелізація)");
             }
         }
     }
