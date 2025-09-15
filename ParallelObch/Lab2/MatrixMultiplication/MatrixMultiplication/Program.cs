@@ -121,7 +121,6 @@ class Program
         Console.WriteLine($"B: {m} × {p}");
         Console.WriteLine($"Потоків: {k}");
 
-        // Показуємо розподіл роботи
         int baseRows = n / k;
         int extraRows = n % k;
         Console.WriteLine($"\nРозподіл рядків: {baseRows} базових + {extraRows} додаткових");
