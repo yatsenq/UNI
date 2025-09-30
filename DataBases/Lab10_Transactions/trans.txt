@@ -1,0 +1,550 @@
+-- ========================================================================
+-- ЛАБОРАТОРНА РОБОТА №10: Транзакції в СКБД PostgreSQL
+-- База даних: Страхова система
+-- ========================================================================
+
+-- ========================================================================
+-- ТРАНЗАКЦІЯ 1: Збільшення страхових сум з використанням SAVEPOINT
+-- Демонструє: BEGIN, COMMIT, SAVEPOINT, ROLLBACK TO
+-- ========================================================================
+
+-- Перевіримо початкові дані
+SELECT POLICY_ID, INSURANCE_AMOUNT, START_DATE, END_DATE 
+FROM INSURANCE_POLICY 
+WHERE POLICY_ID IN (1, 2, 3, 4, 5)
+ORDER BY POLICY_ID;
+
+-- ВИКОНУЄМО В SESSION 1:
+BEGIN;
+
+-- Крок 1: Збільшуємо страхові суми на 100,000 для всіх полісів
+UPDATE INSURANCE_POLICY
+SET INSURANCE_AMOUNT = INSURANCE_AMOUNT + 100000.00
+WHERE POLICY_ID IN (1, 2, 3, 4, 5);
+
+-- Перевіряємо зміни
+SELECT POLICY_ID, INSURANCE_AMOUNT FROM INSURANCE_POLICY 
+WHERE POLICY_ID IN (1, 2, 3, 4, 5)
+ORDER BY POLICY_ID;
+
+-- Створюємо точку збереження після базового оновлення
+SAVEPOINT after_basic_update;
+
+-- Крок 2: Помилково додаємо занадто велику суму до полісу 1
+UPDATE INSURANCE_POLICY
+SET INSURANCE_AMOUNT = INSURANCE_AMOUNT + 4000000.00
+WHERE POLICY_ID = 1;
+
+-- Перевіряємо - бачимо помилку (дуже велика сума)
+SELECT POLICY_ID, INSURANCE_AMOUNT FROM INSURANCE_POLICY 
+WHERE POLICY_ID = 1;
+
+-- Крок 3: Відкочуємо помилкову операцію до точки збереження
+ROLLBACK TO after_basic_update;
+
+-- Перевіряємо - сума полісу 1 повернулась до стану після базового оновлення
+SELECT POLICY_ID, INSURANCE_AMOUNT FROM INSURANCE_POLICY 
+WHERE POLICY_ID IN (1, 2, 3, 4, 5)
+ORDER BY POLICY_ID;
+
+-- Крок 4: Правильно додаємо 50,000 до полісу 1
+UPDATE INSURANCE_POLICY
+SET INSURANCE_AMOUNT = INSURANCE_AMOUNT + 50000.00
+WHERE POLICY_ID = 1;
+
+-- Остаточна перевірка перед фіксацією
+SELECT POLICY_ID, INSURANCE_AMOUNT FROM INSURANCE_POLICY 
+WHERE POLICY_ID IN (1, 2, 3, 4, 5)
+ORDER BY POLICY_ID;
+
+-- Фіксуємо всі зміни
+COMMIT;
+
+-- Перевіряємо фінальний результат
+SELECT POLICY_ID, INSURANCE_AMOUNT FROM INSURANCE_POLICY 
+WHERE POLICY_ID IN (1, 2, 3, 4, 5)
+ORDER BY POLICY_ID;
+
+
+-- ========================================================================
+-- ТРАНЗАКЦІЯ 2: Оновлення контактної інформації клієнта
+-- Демонструє: SAVEPOINT для часткового відкату змін
+-- ========================================================================
+
+-- Перевіримо початкові дані
+SELECT PERSON_ID, FIRST_NAME, LAST_NAME, EMAIL, PHONE_NUMBER
+FROM PERSON_CHARACTERISTICS
+WHERE PERSON_ID = 1;
+
+-- ВИКОНУЄМО В SESSION 1:
+BEGIN;
+
+-- Крок 1: Оновлюємо email клієнта
+UPDATE PERSON_CHARACTERISTICS
+SET EMAIL = 'new.email@example.com'
+WHERE PERSON_ID = 1;
+
+-- Перевіряємо зміну
+SELECT PERSON_ID, EMAIL, PHONE_NUMBER FROM PERSON_CHARACTERISTICS WHERE PERSON_ID = 1;
+
+-- Створюємо точку збереження після оновлення email
+SAVEPOINT after_email_update;
+
+-- Крок 2: Спроба оновити телефон (припустимо, це помилковий номер)
+UPDATE PERSON_CHARACTERISTICS
+SET PHONE_NUMBER = '+380991234567'
+WHERE PERSON_ID = 1;
+
+-- Перевіряємо
+SELECT PERSON_ID, EMAIL, PHONE_NUMBER FROM PERSON_CHARACTERISTICS WHERE PERSON_ID = 1;
+
+-- Крок 3: Виявляємо помилку і відкочуємо зміну телефону
+ROLLBACK TO after_email_update;
+
+-- Перевіряємо - email змінено, телефон залишився старий
+SELECT PERSON_ID, EMAIL, PHONE_NUMBER FROM PERSON_CHARACTERISTICS WHERE PERSON_ID = 1;
+
+-- Фіксуємо зміни (тільки email)
+COMMIT;
+
+-- Фінальна перевірка
+SELECT PERSON_ID, FIRST_NAME, LAST_NAME, EMAIL, PHONE_NUMBER
+FROM PERSON_CHARACTERISTICS
+WHERE PERSON_ID = 1;
+
+
+-- ========================================================================
+-- ТРАНЗАКЦІЯ 3: Додавання нового полісу з усіма пов'язаними даними
+-- Демонструє: складна транзакція "все або нічого" з множинними SAVEPOINT
+-- ========================================================================
+
+-- Перевіримо поточну кількість записів
+SELECT 'PERSON_CHARACTERISTICS' AS table_name, COUNT(*) FROM PERSON_CHARACTERISTICS
+UNION ALL SELECT 'INSURED', COUNT(*) FROM INSURED
+UNION ALL SELECT 'PROPERTY_CHARACTERISTICS', COUNT(*) FROM PROPERTY_CHARACTERISTICS
+UNION ALL SELECT 'INSURANCE_OBJECT', COUNT(*) FROM INSURANCE_OBJECT
+UNION ALL SELECT 'AGREEMENT', COUNT(*) FROM AGREEMENT
+UNION ALL SELECT 'INSURANCE_POLICY', COUNT(*) FROM INSURANCE_POLICY;
+
+-- ВИКОНУЄМО В SESSION 1:
+BEGIN;
+
+-- Крок 1: Додаємо нову особу (клієнта)
+INSERT INTO PERSON_CHARACTERISTICS (GENDER, BIRTH_DATE, EMAIL, PHONE_NUMBER, FIRST_NAME, LAST_NAME)
+VALUES ('M', '1985-05-15', 'ivan.koval@example.com', '+380671234567', 'Іван', 'Коваль')
+RETURNING PERSON_ID;
+
+-- Зберігаємо ID нової особи (припустимо, отримали PERSON_ID = 101)
+-- Створюємо точку збереження після додавання особи
+SAVEPOINT after_person_insert;
+
+-- Крок 2: Додаємо запис застрахованої особи
+INSERT INTO INSURED (ADDRESS, PHONE_NUMBER, GENDER, BIRTH_DATE, PERSON_ID, EMAIL)
+VALUES ('вул. Шевченка, 10, Київ', '+380671234567', 'M', '1985-05-15', 
+        (SELECT MAX(PERSON_ID) FROM PERSON_CHARACTERISTICS), 'ivan.koval@example.com')
+RETURNING INSURED_ID;
+
+-- Створюємо точку збереження після додавання застрахованого
+SAVEPOINT after_insured_insert;
+
+-- Крок 3: Додаємо нерухомість (об'єкт страхування)
+INSERT INTO PROPERTY_CHARACTERISTICS (DESCRIPTION, VALUE, YEAR_OF_ISSUE, LOCATION, CURRENCY)
+VALUES ('Квартира 2-кімнатна, 65 кв.м', 1500000.00, 2010, 'вул. Шевченка, 10, Київ', 'UAH')
+RETURNING PROPERTY_ID;
+
+-- Створюємо точку збереження після додавання нерухомості
+SAVEPOINT after_property_insert;
+
+-- Крок 4: Спроба додати об'єкт страхування з помилковим типом
+INSERT INTO INSURANCE_OBJECT (OBJECT_TYPE, INSURED_ID, PROPERTY_ID)
+VALUES ('InvalidType',  -- ПОМИЛКА: неправильний тип!
+        (SELECT MAX(INSURED_ID) FROM INSURED),
+        (SELECT MAX(PROPERTY_ID) FROM PROPERTY_CHARACTERISTICS));
+-- Ця команда викличе помилку через обмеження insurance_type
+
+-- Відкочуємо до попереднього кроку
+ROLLBACK TO after_property_insert;
+
+-- Крок 5: Правильно додаємо об'єкт страхування
+INSERT INTO INSURANCE_OBJECT (OBJECT_TYPE, INSURED_ID, PROPERTY_ID)
+VALUES ('Property',  -- Правильний тип
+        (SELECT MAX(INSURED_ID) FROM INSURED),
+        (SELECT MAX(PROPERTY_ID) FROM PROPERTY_CHARACTERISTICS))
+RETURNING OBJECT_ID;
+
+-- Створюємо точку збереження після додавання об'єкта
+SAVEPOINT after_object_insert;
+
+-- Крок 6: Додаємо договір
+INSERT INTO AGREEMENT (CONCLUSION_DATE, STATUS, TOTAL_INSURANCE_AMOUNT, DURATION)
+VALUES ('2024-09-29', 'Active', 1500000.00, 12)
+RETURNING AGREEMENT_ID;
+
+-- Створюємо точку збереження після додавання договору
+SAVEPOINT after_agreement_insert;
+
+-- Крок 7: Додаємо страховий поліс
+INSERT INTO INSURANCE_POLICY (START_DATE, END_DATE, INSURANCE_AMOUNT, INSURED_ID, AGREEMENT_ID)
+VALUES ('2024-10-01', '2025-09-30', 1500000.00,
+        (SELECT MAX(INSURED_ID) FROM INSURED),
+        (SELECT MAX(AGREEMENT_ID) FROM AGREEMENT))
+RETURNING POLICY_ID;
+
+-- Перевіряємо всі додані дані перед фіксацією
+SELECT 
+    pc.PERSON_ID, pc.FIRST_NAME, pc.LAST_NAME,
+    i.INSURED_ID, i.ADDRESS,
+    p.PROPERTY_ID, p.DESCRIPTION, p.VALUE,
+    io.OBJECT_ID, io.OBJECT_TYPE,
+    a.AGREEMENT_ID, a.STATUS,
+    ip.POLICY_ID, ip.INSURANCE_AMOUNT
+FROM PERSON_CHARACTERISTICS pc
+JOIN INSURED i ON pc.PERSON_ID = i.PERSON_ID
+JOIN INSURANCE_OBJECT io ON i.INSURED_ID = io.INSURED_ID
+JOIN PROPERTY_CHARACTERISTICS p ON io.PROPERTY_ID = p.PROPERTY_ID
+JOIN AGREEMENT a ON a.AGREEMENT_ID = (SELECT MAX(AGREEMENT_ID) FROM AGREEMENT)
+JOIN INSURANCE_POLICY ip ON i.INSURED_ID = ip.INSURED_ID AND ip.AGREEMENT_ID = a.AGREEMENT_ID
+WHERE pc.PERSON_ID = (SELECT MAX(PERSON_ID) FROM PERSON_CHARACTERISTICS);
+
+-- Все коректно - фіксуємо транзакцію
+COMMIT;
+
+-- Перевіряємо фінальну кількість записів
+SELECT 'PERSON_CHARACTERISTICS' AS table_name, COUNT(*) FROM PERSON_CHARACTERISTICS
+UNION ALL SELECT 'INSURED', COUNT(*) FROM INSURED
+UNION ALL SELECT 'PROPERTY_CHARACTERISTICS', COUNT(*) FROM PROPERTY_CHARACTERISTICS
+UNION ALL SELECT 'INSURANCE_OBJECT', COUNT(*) FROM INSURANCE_OBJECT
+UNION ALL SELECT 'AGREEMENT', COUNT(*) FROM AGREEMENT
+UNION ALL SELECT 'INSURANCE_POLICY', COUNT(*) FROM INSURANCE_POLICY;
+
+
+-- ========================================================================
+-- ДЕМОНСТРАЦІЯ РІВНІВ ІЗОЛЯЦІЇ ТРАНЗАКЦІЙ
+-- ========================================================================
+
+-- ========================================================================
+-- ЧАСТИНА 1: READ COMMITTED (рівень за замовчуванням)
+-- Демонструє: транзакція бачить тільки зафіксовані зміни інших транзакцій
+-- ========================================================================
+
+-- Підготовка: перевіримо початкові дані
+SELECT POLICY_ID, INSURANCE_AMOUNT 
+FROM INSURANCE_POLICY 
+WHERE POLICY_ID = 1;
+
+-- ========== SESSION 1 ==========
+-- Починаємо транзакцію і оновлюємо дані
+BEGIN;
+
+UPDATE INSURANCE_POLICY
+SET INSURANCE_AMOUNT = 3000000.00
+WHERE POLICY_ID = 1;
+
+-- Перевіряємо в SESSION 1 (бачимо нове значення)
+SELECT POLICY_ID, INSURANCE_AMOUNT 
+FROM INSURANCE_POLICY 
+WHERE POLICY_ID = 1;
+
+-- НЕ РОБИМО COMMIT! Залишаємо транзакцію відкритою
+
+
+-- ========== SESSION 2 (відкрити в іншому вікні) ==========
+-- Встановлюємо рівень ізоляції READ COMMITTED (або просто BEGIN, це за замовчуванням)
+BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+
+-- Читаємо дані - бачимо СТАРЕ значення (транзакція SESSION 1 ще не зафіксована)
+SELECT POLICY_ID, INSURANCE_AMOUNT 
+FROM INSURANCE_POLICY 
+WHERE POLICY_ID = 1;
+-- Результат: старе значення, бо SESSION 1 ще не зробив COMMIT
+
+-- Залишаємо SESSION 2 відкритим
+
+
+-- ========== ПОВЕРТАЄМОСЬ ДО SESSION 1 ==========
+-- Фіксуємо зміни
+COMMIT;
+
+
+-- ========== ПОВЕРТАЄМОСЬ ДО SESSION 2 ==========
+-- Тепер читаємо ще раз (БЕЗ завершення транзакції SESSION 2)
+SELECT POLICY_ID, INSURANCE_AMOUNT 
+FROM INSURANCE_POLICY 
+WHERE POLICY_ID = 1;
+-- Результат: НОВЕ значення! READ COMMITTED дозволяє бачити нові зафіксовані зміни
+
+-- Завершуємо транзакцію в SESSION 2
+COMMIT;
+
+-- ВИСНОВОК READ COMMITTED:
+-- При рівні ізоляції READ COMMITTED транзакція бачить зміни інших транзакцій
+-- відразу після їх фіксації (COMMIT), навіть якщо поточна транзакція ще не завершена.
+-- Це може призвести до "неповторюваних читань" (non-repeatable reads).
+
+
+-- ========================================================================
+-- ЧАСТИНА 2: REPEATABLE READ
+-- Демонструє: транзакція бачить знімок даних на момент її початку
+-- ========================================================================
+
+-- Підготовка: встановимо конкретне значення
+UPDATE INSURANCE_POLICY SET INSURANCE_AMOUNT = 2500000.00 WHERE POLICY_ID = 2;
+
+-- Перевіримо початкове значення
+SELECT POLICY_ID, INSURANCE_AMOUNT 
+FROM INSURANCE_POLICY 
+WHERE POLICY_ID = 2;
+
+
+-- ========== SESSION 1 (SESSION A) ==========
+-- Починаємо транзакцію з рівнем ізоляції REPEATABLE READ
+BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+
+-- Читаємо дані (створюється знімок на цей момент)
+SELECT POLICY_ID, INSURANCE_AMOUNT 
+FROM INSURANCE_POLICY 
+WHERE POLICY_ID = 2;
+-- Результат: 2500000.00
+
+-- Залишаємо транзакцію відкритою
+
+
+-- ========== SESSION 2 (SESSION B) - відкрити в іншому вікні ==========
+-- Починаємо нову транзакцію і одразу змінюємо дані
+BEGIN;
+
+UPDATE INSURANCE_POLICY
+SET INSURANCE_AMOUNT = 3500000.00
+WHERE POLICY_ID = 2;
+
+-- Перевіряємо в SESSION 2
+SELECT POLICY_ID, INSURANCE_AMOUNT 
+FROM INSURANCE_POLICY 
+WHERE POLICY_ID = 2;
+-- Результат: 3500000.00
+
+-- Фіксуємо зміни в SESSION 2
+COMMIT;
+
+
+-- ========== ПОВЕРТАЄМОСЬ ДО SESSION 1 ==========
+-- Читаємо дані ще раз (транзакція SESSION 1 все ще відкрита)
+SELECT POLICY_ID, INSURANCE_AMOUNT 
+FROM INSURANCE_POLICY 
+WHERE POLICY_ID = 2;
+-- Результат: ДОСІ 2500000.00 (старе значення!)
+-- REPEATABLE READ гарантує консистентне бачення даних всередині транзакції
+
+-- Завершуємо транзакцію в SESSION 1
+COMMIT;
+
+-- Тепер читаємо в новій транзакції
+SELECT POLICY_ID, INSURANCE_AMOUNT 
+FROM INSURANCE_POLICY 
+WHERE POLICY_ID = 2;
+-- Результат: 3500000.00 (нове значення після завершення попередньої транзакції)
+
+-- ВИСНОВОК REPEATABLE READ:
+-- При рівні ізоляції REPEATABLE READ транзакція бачить знімок даних на момент
+-- першого запиту в транзакції і не бачить змін, зроблених іншими транзакціями,
+-- навіть якщо вони вже зафіксовані. Це усуває проблему "неповторюваних читань".
+
+
+-- ========================================================================
+-- ЧАСТИНА 3: SERIALIZABLE з демонстрацією serialization failure
+-- Демонструє: найвищий рівень ізоляції + конфлікт серіалізації
+-- ========================================================================
+
+-- Підготовка: встановимо початкове значення
+UPDATE INSURANCE_POLICY SET INSURANCE_AMOUNT = 2000000.00 WHERE POLICY_ID = 3;
+
+-- Перевіримо початкове значення
+SELECT POLICY_ID, INSURANCE_AMOUNT 
+FROM INSURANCE_POLICY 
+WHERE POLICY_ID = 3;
+
+
+-- ========== SESSION 1 (SESSION A) ==========
+-- Починаємо транзакцію з рівнем SERIALIZABLE
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
+-- Читаємо дані (створюється знімок)
+SELECT POLICY_ID, INSURANCE_AMOUNT 
+FROM INSURANCE_POLICY 
+WHERE POLICY_ID = 3;
+-- Результат: 2000000.00
+
+-- Залишаємо транзакцію відкритою (НЕ ОНОВЛЮЄМО ПОКИ ЩО)
+
+
+-- ========== SESSION 2 (SESSION B) - відкрити в іншому вікні ==========
+-- Починаємо транзакцію з рівнем SERIALIZABLE
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
+-- Читаємо ті ж дані
+SELECT POLICY_ID, INSURANCE_AMOUNT 
+FROM INSURANCE_POLICY 
+WHERE POLICY_ID = 3;
+-- Результат: 2000000.00
+
+-- Залишаємо транзакцію відкритою
+
+
+-- ========== ПОВЕРТАЄМОСЬ ДО SESSION 1 ==========
+-- Оновлюємо дані в SESSION 1
+UPDATE INSURANCE_POLICY
+SET INSURANCE_AMOUNT = INSURANCE_AMOUNT + 500000.00
+WHERE POLICY_ID = 3;
+
+-- Перевіряємо в SESSION 1
+SELECT POLICY_ID, INSURANCE_AMOUNT 
+FROM INSURANCE_POLICY 
+WHERE POLICY_ID = 3;
+-- Результат: 2500000.00
+
+-- Залишаємо транзакцію SESSION 1 відкритою (НЕ РОБИМО COMMIT)
+
+
+-- ========== ПОВЕРТАЄМОСЬ ДО SESSION 2 ==========
+-- Спробуємо оновити той самий рядок в SESSION 2
+UPDATE INSURANCE_POLICY
+SET INSURANCE_AMOUNT = INSURANCE_AMOUNT + 300000.00
+WHERE POLICY_ID = 3;
+-- Запит "зависне" - чекає на завершення транзакції SESSION 1 (блокування)
+
+
+-- ========== ПОВЕРТАЄМОСЬ ДО SESSION 1 ==========
+-- Фіксуємо транзакцію SESSION 1
+COMMIT;
+
+
+-- ========== ПОВЕРТАЄМОСЬ ДО SESSION 2 ==========
+-- Після COMMIT в SESSION 1, SESSION 2 отримає ПОМИЛКУ:
+-- ERROR: could not serialize access due to concurrent update
+-- або
+-- ERROR: could not serialize access due to read/write dependencies among transactions
+
+-- Це serialization failure! PostgreSQL автоматично відкочує транзакцію SESSION 2
+
+-- SESSION 2 повинен повторити транзакцію:
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
+-- Читаємо актуальні дані
+SELECT POLICY_ID, INSURANCE_AMOUNT 
+FROM INSURANCE_POLICY 
+WHERE POLICY_ID = 3;
+-- Результат: 2500000.00 (зміна SESSION 1 вже зафіксована)
+
+-- Оновлюємо
+UPDATE INSURANCE_POLICY
+SET INSURANCE_AMOUNT = INSURANCE_AMOUNT + 300000.00
+WHERE POLICY_ID = 3;
+
+-- Фіксуємо
+COMMIT;
+
+-- Перевіряємо фінальний результат
+SELECT POLICY_ID, INSURANCE_AMOUNT 
+FROM INSURANCE_POLICY 
+WHERE POLICY_ID = 3;
+-- Результат: 2800000.00
+
+-- ВИСНОВОК SERIALIZABLE:
+-- При рівні ізоляції SERIALIZABLE PostgreSQL гарантує, що паралельні транзакції
+-- виконуються так, ніби вони були запущені послідовно. При виявленні конфлікту
+-- одна з транзакцій отримує помилку serialization failure і повинна бути повторена.
+-- Це найвищий рівень ізоляції, який запобігає всім аномаліям (брудне читання,
+-- неповторюване читання, фантомне читання, аномалія серіалізації).
+
+
+-- ========================================================================
+-- ДОДАТКОВА ДЕМОНСТРАЦІЯ: Deadlock (взаємне блокування)
+-- ========================================================================
+
+-- Підготовка
+UPDATE INSURANCE_POLICY SET INSURANCE_AMOUNT = 1000000.00 WHERE POLICY_ID IN (4, 5);
+
+-- ========== SESSION 1 ==========
+BEGIN;
+
+-- Блокуємо поліс 4
+UPDATE INSURANCE_POLICY
+SET INSURANCE_AMOUNT = INSURANCE_AMOUNT + 100000.00
+WHERE POLICY_ID = 4;
+
+-- Залишаємо відкритим
+
+
+-- ========== SESSION 2 ==========
+BEGIN;
+
+-- Блокуємо поліс 5
+UPDATE INSURANCE_POLICY
+SET INSURANCE_AMOUNT = INSURANCE_AMOUNT + 100000.00
+WHERE POLICY_ID = 5;
+
+-- Тепер спробуємо оновити поліс 4 (який заблокований SESSION 1)
+-- Цей запит "зависне"
+UPDATE INSURANCE_POLICY
+SET INSURANCE_AMOUNT = INSURANCE_AMOUNT + 50000.00
+WHERE POLICY_ID = 4;
+
+
+-- ========== ПОВЕРТАЄМОСЬ ДО SESSION 1 ==========
+-- Тепер спробуємо оновити поліс 5 (який заблокований SESSION 2)
+UPDATE INSURANCE_POLICY
+SET INSURANCE_AMOUNT = INSURANCE_AMOUNT + 50000.00
+WHERE POLICY_ID = 5;
+
+-- PostgreSQL виявить deadlock і автоматично відкотить одну з транзакцій:
+-- ERROR: deadlock detected
+-- DETAIL: Process XXXX waits for ShareLock on transaction YYYY...
+
+-- Транзакція, яка отримала помилку, автоматично відкочується
+-- Інша транзакція може продовжити роботу
+
+-- ========== У транзакції, що НЕ отримала помилку ==========
+COMMIT;
+
+-- ========== У транзакції, що отримала помилку ==========
+-- Треба перезапустити транзакцію
+BEGIN;
+UPDATE INSURANCE_POLICY
+SET INSURANCE_AMOUNT = INSURANCE_AMOUNT + 100000.00
+WHERE POLICY_ID = 5;
+UPDATE INSURANCE_POLICY
+SET INSURANCE_AMOUNT = INSURANCE_AMOUNT + 50000.00
+WHERE POLICY_ID = 4;
+COMMIT;
+
+
+-- ========================================================================
+-- ПІДСУМКОВА ТАБЛИЦЯ РІВНІВ ІЗОЛЯЦІЇ
+-- ========================================================================
+
+/*
+┌─────────────────┬────────────────┬────────────────────┬──────────────┬──────────────────────┐
+│ Рівень ізоляції │ Брудне читання │ Неповторюване      │ Фантомне     │ Аномалія             │
+│                 │ (Dirty Read)   │ читання            │ читання      │ серіалізації         │
+│                 │                │ (Non-repeatable    │ (Phantom     │ (Serialization       │
+│                 │                │ Read)              │ Read)        │ Anomaly)             │
+├─────────────────┼────────────────┼────────────────────┼──────────────┼──────────────────────┤
+│ READ COMMITTED  │ Неможливо      │ МОЖЛИВО            │ МОЖЛИВО      │ МОЖЛИВО              │
+│ (за замовч.)    │                │                    │              │                      │
+├─────────────────┼────────────────┼────────────────────┼──────────────┼──────────────────────┤
+│ REPEATABLE READ │ Неможливо      │ Неможливо          │ МОЖЛИВО*     │ МОЖЛИВО*             │
+│                 │                │                    │              │                      │
+├─────────────────┼────────────────┼────────────────────┼──────────────┼──────────────────────┤
+│ SERIALIZABLE    │ Неможливо      │ Неможливо          │ Неможливо    │ Неможливо            │
+│                 │                │                    │              │ (викликає помилку)   │
+└─────────────────┴────────────────┴────────────────────┴──────────────┴──────────────────────┘
+
+* В PostgreSQL REPEATABLE READ фактично запобігає фантомним читанням в більшості випадків
+  завдяки механізму MVCC, але стандарт SQL допускає їх на цьому рівні.
+
+Пояснення термінів:
+- Брудне читання: читання незафіксованих змін іншої транзакції
+- Неповторюване читання: повторне читання повертає інше значення через COMMIT іншої транзакції
+- Фантомне читання: повторний SELECT повертає нові/відсутні рядки
+- Аномалія серіалізації: результат паралельного виконання відрізняється від послідовного
+*/

@@ -1,0 +1,18 @@
+Book;Effective Java;2018;Pearson;Joshua Bloch;416
+Book;Clean Code;2008;Prentice Hall;Robert C. Martin;464
+Book;Refactoring;2019;Addison-Wesley;Martin Fowler;448
+Book;Refactoring #2;2020;Addison-Wesley;Martin Fowler;492
+Book;The Pragmatic Programmer;1999;Addison-Wesley;Andrew Hunt;352
+Book;Head First Design Patterns;2004;O'Reilly Media;Eric Freeman;694
+Magazine;National Geographic;2024;National Geographic Society;7;Nature
+Magazine;Time;2024;Time Inc;12;News
+Magazine;Vogue;2024;Conde Nast;8;Fashion
+Magazine;Scientific American;2024;Springer Nature;11;Science
+Magazine;PC World;2024;IDG;10;Technology
+Magazine;The Economist;2024;The Economist Group;52;Economics
+Magazine;Popular Mechanics;2024;Hearst;6;Technology
+Book;Introduction to Algorithms;2009;MIT Press;Thomas H. Cormen;1312
+Book;Artificial Intelligence: A Modern Approach;2020;Pearson;Stuart Russell;1152
+Book;Design Patterns Explained;2007;Addison-Wesley;Alan Shalloway;420
+Magazine;Forbes;2024;Forbes Media;15;Business
+Magazine;Wired;2024;Condé Nast;12;Technology

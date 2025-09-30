@@ -1,0 +1,15 @@
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab4\Lab4_Forms\Lab4_Forms\obj\Debug\net9.0-windows\Lab4_Forms.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab4\Lab4_Forms\Lab4_Forms\obj\Debug\net9.0-windows\Lab4_Forms.AssemblyInfoInputs.cache
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab4\Lab4_Forms\Lab4_Forms\obj\Debug\net9.0-windows\Lab4_Forms.AssemblyInfo.cs
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab4\Lab4_Forms\Lab4_Forms\obj\Debug\net9.0-windows\Lab4_Forms.csproj.CoreCompileInputs.cache
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab4\Lab4_Forms\Lab4_Forms\obj\Debug\net9.0-windows\Lab4_Forms.sourcelink.json
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab4\Lab4_Forms\Lab4_Forms\bin\Debug\net9.0-windows\Lab4_Forms.exe
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab4\Lab4_Forms\Lab4_Forms\bin\Debug\net9.0-windows\Lab4_Forms.deps.json
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab4\Lab4_Forms\Lab4_Forms\bin\Debug\net9.0-windows\Lab4_Forms.runtimeconfig.json
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab4\Lab4_Forms\Lab4_Forms\bin\Debug\net9.0-windows\Lab4_Forms.dll
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab4\Lab4_Forms\Lab4_Forms\bin\Debug\net9.0-windows\Lab4_Forms.pdb
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab4\Lab4_Forms\Lab4_Forms\obj\Debug\net9.0-windows\Lab4_Forms.dll
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab4\Lab4_Forms\Lab4_Forms\obj\Debug\net9.0-windows\refint\Lab4_Forms.dll
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab4\Lab4_Forms\Lab4_Forms\obj\Debug\net9.0-windows\Lab4_Forms.pdb
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab4\Lab4_Forms\Lab4_Forms\obj\Debug\net9.0-windows\Lab4_Forms.genruntimeconfig.cache
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab4\Lab4_Forms\Lab4_Forms\obj\Debug\net9.0-windows\ref\Lab4_Forms.dll

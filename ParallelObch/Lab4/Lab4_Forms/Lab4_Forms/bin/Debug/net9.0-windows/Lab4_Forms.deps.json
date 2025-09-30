@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v9.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v9.0": {
+      "Lab4_Forms/1.0.0": {
+        "runtime": {
+          "Lab4_Forms.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Lab4_Forms/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

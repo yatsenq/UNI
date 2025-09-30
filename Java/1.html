@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="uk">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>StayFit - Goal Setup Wizard Wireframe</title>
+		<style>
+			* {
+				box-sizing: border-box;
+				margin: 0;
+				padding: 0;
+			}
+			body {
+				font-family: Arial, sans-serif;
+				background: #f0f0f0;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				min-height: 100vh;
+				padding: 20px;
+			}
+
+			.wizard-window {
+				width: 600px;
+				height: 700px;
+				background: white;
+				border: 3px solid #000;
+				display: flex;
+				flex-direction: column;
+				box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+			}
+
+			.wizard-header {
+				height: 80px;
+				background: #f0f0f0;
+				border-bottom: 2px solid #000;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				padding: 0 30px;
+			}
+
+			.header-info {
+				display: flex;
+				flex-direction: column;
+			}
+
+			.welcome-text {
+				font-size: 14px;
+				font-weight: bold;
+				text-transform: uppercase;
+			}
+
+			.user-name {
+				font-size: 12px;
+				color: #666;
+				margin-top: 2px;
+			}
+
+			.step-counter {
+				font-size: 12px;
+				color: #666;
+				text-transform: uppercase;
+			}
+
+			.progress-bar-container {
+				height: 8px;
+				background: #f0f0f0;
+				border: 1px solid #ccc;
+				border-left: none;
+				border-right: none;
+			}
+
+			.progress-bar {
+				height: 100%;
+				background: #333;
+				width: 33%;
+				transition: width 0.3s;
+			}
+
+			.wizard-body {
+				flex: 1;
+				padding: 40px;
+				overflow-y: auto;
+			}
+
+			.step-content {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				text-align: center;
+			}
+
+			.step-title {
+				font-weight: bold;
+				font-size: 20px;
+				text-transform: uppercase;
+				margin-bottom: 15px;
+			}
+
+			.step-subtitle {
+				font-size: 12px;
+				color: #666;
+				margin-bottom: 30px;
+				line-height: 1.4;
+			}
+
+			/* Step 1: Goal Selection */
+			.goal-options {
+				display: flex;
+				flex-direction: column;
+				gap: 15px;
+				width: 100%;
+				max-width: 400px;
+			}
+
+			.goal-option {
+				border: 2px solid #333;
+				padding: 20px;
+				cursor: pointer;
+				background: white;
+				text-align: left;
+				position: relative;
+			}
+
+			.goal-option:hover {
+				background: #f8f8f8;
+			}
+
+			.goal-option.selected {
+				background: #f0f0f0;
+				border-color: #000;
+			}
+
+			.goal-option::before {
+				content: '□';
+				position: absolute;
+				right: 15px;
+				top: 15px;
+				font-size: 16px;
+			}
+
+			.goal-option.selected::before {
+				content: '■';
+			}
+
+			.goal-name {
+				font-weight: bold;
+				font-size: 14px;
+				text-transform: uppercase;
+				margin-bottom: 8px;
+			}
+
+			.goal-description {
+				font-size: 11px;
+				color: #666;
+				line-height: 1.3;
+			}
+
+			.goal-recommendation {
+				font-size: 10px;
+				color: #333;
+				background: #f8f8f8;
+				padding: 5px;
+				margin-top: 8px;
+				border: 1px solid #ccc;
+			}
+
+			/* Step 2: Weekly Goal */
+			.weekly-options {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 15px;
+				width: 100%;
+				max-width: 450px;
+			}
+
+			.weekly-option {
+				border: 2px solid #333;
+				padding: 15px;
+				cursor: pointer;
+				background: white;
+				text-align: center;
+				position: relative;
+			}
+
+			.weekly-option.selected {
+				background: #f0f0f0;
+				border-color: #000;
+			}
+
+			.weekly-value {
+				font-size: 18px;
+				font-weight: bold;
+				margin-bottom: 5px;
+			}
+
+			.weekly-label {
+				font-size: 10px;
+				text-transform: uppercase;
+				color: #666;
+			}
+
+			/* Step 3: Activity Level */
+			.activity-options {
+				display: flex;
+				flex-direction: column;
+				gap: 12px;
+				width: 100%;
+				max-width: 500px;
+			}
+
+			.activity-option {
+				border: 2px solid #333;
+				padding: 15px 20px;
+				cursor: pointer;
+				background: white;
+				text-align: left;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+
+			.activity-option.selected {
+				background: #f0f0f0;
+				border-color: #000;
+			}
+
+			.activity-info {
+				flex: 1;
+			}
+
+			.activity-name {
+				font-weight: bold;
+				font-size: 12px;
+				text-transform: uppercase;
+				margin-bottom: 5px;
+			}
+
+			.activity-description {
+				font-size: 10px;
+				color: #666;
+				line-height: 1.3;
+			}
+
+			.activity-multiplier {
+				font-size: 11px;
+				color: #333;
+				font-weight: bold;
+			}
+
+			/* Final Step: Summary */
+			.summary-container {
+				width: 100%;
+				max-width: 450px;
+			}
+
+			.summary-section {
+				border: 2px solid #333;
+				margin-bottom: 20px;
+				background: white;
+			}
+
+			.summary-header {
+				background: #f0f0f0;
+				padding: 10px 15px;
+				border-bottom: 1px solid #333;
+				font-weight: bold;
+				font-size: 11px;
+				text-transform: uppercase;
+			}
+
+			.summary-content {
+				padding: 15px;
+			}
+
+			.summary-row {
+				display: flex;
+				justify-content: space-between;
+				margin-bottom: 8px;
+				font-size: 12px;
+			}
+
+			.summary-value {
+				font-weight: bold;
+			}
+
+			.macros-breakdown {
+				display: grid;
+				grid-template-columns: 1fr 1fr 1fr;
+				gap: 10px;
+				margin-top: 15px;
+			}
+
+			.macro-item {
+				text-align: center;
+				padding: 10px;
+				border: 1px solid #ccc;
+				background: #f8f8f8;
+			}
+
+			.macro-value {
+				font-size: 16px;
+				font-weight: bold;
+				margin-bottom: 3px;
+			}
+
+			.macro-label {
+				font-size: 9px;
+				text-transform: uppercase;
+				color: #666;
+			}
+
+			.macro-grams {
+				font-size: 10px;
+				color: #333;
+			}
+
+			.wizard-footer {
+				height: 70px;
+				background: #f8f8f8;
+				border-top: 1px solid #ccc;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				padding: 0 30px;
+			}
+
+			.btn {
+				padding: 12px 25px;
+				border: 2px solid #333;
+				cursor: pointer;
+				font-weight: bold;
+				text-transform: uppercase;
+				font-size: 11px;
+			}
+
+			.btn-secondary {
+				background: white;
+				color: #333;
+			}
+
+			.btn-primary {
+				background: #333;
+				color: white;
+			}
+
+			.btn:disabled {
+				background: #f0f0f0;
+				color: #999;
+				border-color: #ccc;
+				cursor: not-allowed;
+			}
+
+			.wireframe-label {
+				position: absolute;
+				background: #333;
+				color: white;
+				padding: 3px 6px;
+				font-size: 10px;
+				font-weight: bold;
+				font-family: monospace;
+			}
+
+			.skip-link {
+				font-size: 10px;
+				color: #666;
+				text-decoration: underline;
+				cursor: pointer;
+				text-transform: uppercase;
+				margin-top: 20px;
+			}
+		</style>
+	</head>
+	<body>
+		<!-- Step 1: Goal Selection -->
+		<div class="wizard-window">
+			<div class="wizard-header">
+				<div class="header-info">
+					<div class="welcome-text">НАЛАШТУВАННЯ ЦІЛЕЙ</div>
+					<div class="user-name">Вітаємо, Владислав!</div>
+				</div>
+				<div class="step-counter">КРОК 1 З 4</div>
+			</div>
+
+			<div class="progress-bar-container">
+				<div class="progress-bar"></div>
+			</div>
+
+			<div class="wizard-body">
+				<div class="step-content">
+					<div class="step-title">ОБЕРІТЬ ВАШУ МЕТУ</div>
+					<div class="step-subtitle">
+						ВИБЕРІТЬ ОСНОВНУ ЦІЛЬ, ЯКОЇ ВИ ХОЧЕТЕ ДОСЯГТИ<br />
+						МИ АВТОМАТИЧНО РОЗРАХУЄМО РЕКОМЕНДАЦІЇ
+					</div>
+
+					<div class="goal-options">
+						<div class="goal-option selected">
+							<div class="goal-name">СХУДНЕННЯ</div>
+							<div class="goal-description">
+								Зменшення ваги тіла через створення дефіциту калорій
+							</div>
+							<div class="goal-recommendation">
+								■ Рекомендуємо: дефіцит 300-500 ккал/день
+							</div>
+						</div>
+
+						<div class="goal-option">
+							<div class="goal-name">НАБІР ВАГИ</div>
+							<div class="goal-description">
+								Збільшення м'язової маси через надлишок калорій та білків
+							</div>
+							<div class="goal-recommendation">
+								□ Рекомендуємо: надлишок 200-400 ккал/день
+							</div>
+						</div>
+
+						<div class="goal-option">
+							<div class="goal-name">ПІДТРИМКА ВАГИ</div>
+							<div class="goal-description">
+								Збереження поточної ваги та покращення складу тіла
+							</div>
+							<div class="goal-recommendation">
+								□ Рекомендуємо: підтримка поточного TDEE
+							</div>
+						</div>
+
+						<div class="goal-option">
+							<div class="goal-name">КОНТРОЛЬ БЖВ</div>
+							<div class="goal-description">
+								Фокус на якості харчування та співвідношенні макронутрієнтів
+							</div>
+							<div class="goal-recommendation">
+								□ Рекомендуємо: гнучкий підхід до калорій
+							</div>
+						</div>
+					</div>
+
+					<div class="skip-link">[НАЛАШТУВАТИ ПІЗНІШЕ]</div>
+				</div>
+			</div>
+
+			<div class="wizard-footer">
+				<button class="btn btn-secondary" disabled>[НАЗАД]</button>
+				<button class="btn btn-primary">[ДАЛІ]</button>
+			</div>
+
+			<div class="wireframe-label" style="top: 5px; right: 5px">
+				STEP 1: GOAL
+			</div>
+		</div>
+
+		<!-- Step 2: Weekly Goal (Hidden) -->
+		<div class="wizard-window" style="display: flex">
+			<div class="wizard-header">
+				<div class="header-info">
+					<div class="welcome-text">ШВИДКІСТЬ ДОСЯГНЕННЯ</div>
+					<div class="user-name">Схуднення</div>
+				</div>
+				<div class="step-counter">КРОК 2 З 4</div>
+			</div>
+
+			<div class="progress-bar-container">
+				<div class="progress-bar" style="width: 50%"></div>
+			</div>
+
+			<div class="wizard-body">
+				<div class="step-content">
+					<div class="step-title">СКІЛЬКИ ХОЧЕТЕ СКИДАТИ?</div>
+					<div class="step-subtitle">
+						ОБЕРІТЬ БАЖАНУ ШВИДКІСТЬ СХУДНЕННЯ<br />
+						ПОВІЛЬНЕ СХУДНЕННЯ - БІЛЬШ СТАЛИЙ РЕЗУЛЬТАТ
+					</div>
+
+					<div class="weekly-options">
+						<div class="weekly-option">
+							<div class="weekly-value">0.25 КГ</div>
+							<div class="weekly-label">НА ТИЖДЕНЬ</div>
+							<div style="font-size: 9px; margin-top: 8px; color: #333">
+								ДЕФІЦИТ: ~275 ККАЛ/ДЕНЬ
+							</div>
+						</div>
+
+						<div class="weekly-option selected">
+							<div class="weekly-value">0.5 КГ</div>
+							<div class="weekly-label">НА ТИЖДЕНЬ</div>
+							<div style="font-size: 9px; margin-top: 8px; color: #333">
+								ДЕФІЦИТ: ~550 ККАЛ/ДЕНЬ
+							</div>
+						</div>
+
+						<div class="weekly-option">
+							<div class="weekly-value">0.75 КГ</div>
+							<div class="weekly-label">НА ТИЖДЕНЬ</div>
+							<div style="font-size: 9px; margin-top: 8px; color: #333">
+								ДЕФІЦИТ: ~825 ККАЛ/ДЕНЬ
+							</div>
+						</div>
+
+						<div class="weekly-option">
+							<div class="weekly-value">1.0 КГ</div>
+							<div class="weekly-label">НА ТИЖДЕНЬ</div>
+							<div style="font-size: 9px; margin-top: 8px; color: #333">
+								ДЕФІЦИТ: ~1100 ККАЛ/ДЕНЬ
+							</div>
+						</div>
+					</div>
+
+					<div
+						style="
+							background: #f8f8f8;
+							border: 1px solid #ccc;
+							padding: 15px;
+							margin-top: 25px;
+							font-size: 11px;
+						"
+					>
+						<strong>РЕКОМЕНДАЦІЯ:</strong> Для сталого результату обирайте
+						0.5-0.75 кг на тиждень. Швидше схуднення може призвести до втрати
+						м'язової маси.
+					</div>
+				</div>
+			</div>
+
+			<div class="wizard-footer">
+				<button class="btn btn-secondary">[НАЗАД]</button>
+				<button class="btn btn-primary">[ДАЛІ]</button>
+			</div>
+
+			<div class="wireframe-label" style="top: 5px; right: 5px">
+				STEP 2: RATE
+			</div>
+		</div>
+
+		<!-- Step 3: Activity Level (Hidden) -->
+		<div class="wizard-window" style="display: flex">
+			<div class="wizard-header">
+				<div class="header-info">
+					<div class="welcome-text">РІВЕНЬ АКТИВНОСТІ</div>
+					<div class="user-name">Для точного розрахунку</div>
+				</div>
+				<div class="step-counter">КРОК 3 З 4</div>
+			</div>
+
+			<div class="progress-bar-container">
+				<div class="progress-bar" style="width: 75%"></div>
+			</div>
+
+			<div class="wizard-body">
+				<div class="step-content">
+					<div class="step-title">ВАШ РІВЕНЬ АКТИВНОСТІ?</div>
+					<div class="step-subtitle">
+						ВРАХУЙТЕ ВСЮ ФІЗИЧНУ АКТИВНІСТЬ: РОБОТУ, СПОРТ, ПОБУТ<br />
+						ЦЕ ВПЛИНЕ НА РОЗРАХУНОК ДЕННОЇ НОРМИ КАЛОРІЙ
+					</div>
+
+					<div class="activity-options">
+						<div class="activity-option">
+							<div class="activity-info">
+								<div class="activity-name">МІНІМАЛЬНИЙ</div>
+								<div class="activity-description">
+									Сидяча робота, мало або відсутність фізичних вправ
+								</div>
+							</div>
+							<div class="activity-multiplier">×1.2</div>
+						</div>
+
+						<div class="activity-option selected">
+							<div class="activity-info">
+								<div class="activity-name">НИЗЬКИЙ</div>
+								<div class="activity-description">
+									Легкі вправи 1-3 рази на тиждень, переважно сидяча робота
+								</div>
+							</div>
+							<div class="activity-multiplier">×1.375</div>
+						</div>
+
+						<div class="activity-option">
+							<div class="activity-info">
+								<div class="activity-name">ПОМІРНИЙ</div>
+								<div class="activity-description">
+									Помірні вправи 3-5 разів на тиждень, активний спосіб життя
+								</div>
+							</div>
+							<div class="activity-multiplier">×1.55</div>
+						</div>
+
+						<div class="activity-option">
+							<div class="activity-info">
+								<div class="activity-name">ВИСОКИЙ</div>
+								<div class="activity-description">
+									Важкі вправи 6-7 разів на тиждень, активна робота
+								</div>
+							</div>
+							<div class="activity-multiplier">×1.725</div>
+						</div>
+
+						<div class="activity-option">
+							<div class="activity-info">
+								<div class="activity-name">ДУЖЕ ВИСОКИЙ</div>
+								<div class="activity-description">
+									Важка фізична робота + тренування, 2 рази на день
+								</div>
+							</div>
+							<div class="activity-multiplier">×1.9</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="wizard-footer">
+				<button class="btn btn-secondary">[НАЗАД]</button>
+				<button class="btn btn-primary">[ДАЛІ]</button>
+			</div>
+
+			<div class="wireframe-label" style="top: 5px; right: 5px">
+				STEP 3: ACTIVITY
+			</div>
+		</div>
+
+		<!-- Step 4: Summary (Hidden) -->
+		<div class="wizard-window" style="display: flex">
+			<div class="wizard-header">
+				<div class="header-info">
+					<div class="welcome-text">ПІДСУМОК НАЛАШТУВАНЬ</div>
+					<div class="user-name">Перевірте та підтвердіть</div>
+				</div>
+				<div class="step-counter">КРОК 4 З 4</div>
+			</div>
+
+			<div class="progress-bar-container">
+				<div class="progress-bar" style="width: 100%"></div>
+			</div>
+
+			<div class="wizard-body">
+				<div class="step-content">
+					<div class="step-title">ВАШІ ПЕРСОНАЛЬНІ ЦІЛІ</div>
+					<div class="step-subtitle">
+						ПЕРЕВІРТЕ РОЗРАХОВАНІ ПОКАЗНИКИ<br />
+						ВИ ЗМОЖЕТЕ ЗМІНИТИ ЇХ ПІЗНІШЕ В НАЛАШТУВАННЯХ
+					</div>
+
+					<div class="summary-container">
+						<div class="summary-section">
+							<div class="summary-header">ВАША МЕТА</div>
+							<div class="summary-content">
+								<div class="summary-row">
+									<span>Основна ціль:</span>
+									<span class="summary-value">СХУДНЕННЯ</span>
+								</div>
+								<div class="summary-row">
+									<span>Швидкість:</span>
+									<span class="summary-value">0.5 КГ/ТИЖДЕНЬ</span>
+								</div>
+								<div class="summary-row">
+									<span>Рівень активності:</span>
+									<span class="summary-value">НИЗЬКИЙ (×1.375)</span>
+								</div>
+							</div>
+						</div>
+
+						<div class="summary-section">
+							<div class="summary-header">ЩОДЕННІ НОРМИ</div>
+							<div class="summary-content">
+								<div class="summary-row">
+									<span>Базовий метаболізм (BMR):</span>
+									<span class="summary-value">1,680 ККАЛ</span>
+								</div>
+								<div class="summary-row">
+									<span>Загальні витрати (TDEE):</span>
+									<span class="summary-value">2,310 ККАЛ</span>
+								</div>
+								<div class="summary-row">
+									<span>Цільові калорії:</span>
+									<span class="summary-value">1,760 ККАЛ/ДЕНЬ</span>
+								</div>
+								<div class="summary-row">
+									<span>Дефіцит калорій:</span>
+									<span class="summary-value">-550 ККАЛ/ДЕНЬ</span>
+								</div>
+							</div>
+						</div>
+
+						<div class="summary-section">
+							<div class="summary-header">РОЗПОДІЛ МАКРОНУТРІЄНТІВ</div>
+							<div class="summary-content">
+								<div class="macros-breakdown">
+									<div class="macro-item">
+										<div class="macro-value">35%</div>
+										<div class="macro-label">БІЛКИ</div>
+										<div class="macro-grams">154г/день</div>
+									</div>
+									<div class="macro-item">
+										<div class="macro-value">30%</div>
+										<div class="macro-label">ЖИРИ</div>
+										<div class="macro-grams">59г/день</div>
+									</div>
+									<div class="macro-item">
+										<div class="macro-value">35%</div>
+										<div class="macro-label">ВУГЛЕВОДИ</div>
+										<div class="macro-grams">154г/день</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="wizard-footer">
+				<button class="btn btn-secondary">[ЗМІНИТИ]</button>
+				<button class="btn btn-primary">[РОЗПОЧАТИ ВИКОРИСТАННЯ]</button>
+			</div>
+
+			<div class="wireframe-label" style="top: 5px; right: 5px">
+				STEP 4: SUMMARY
+			</div>
+		</div>
+
+		<!-- Documentation -->
+		<div
+			style="
+				margin: 20px auto;
+				width: 600px;
+				font-family: monospace;
+				font-size: 11px;
+			"
+		>
+			<h3>WIZARD: Initial Goal Setup (600x700px)</h3>
+
+			<p><strong>WIZARD FLOW:</strong></p>
+			<ul style="margin-left: 20px; margin-top: 5px">
+				<li>
+					<strong>Step 1:</strong> Choose primary goal (weight loss, gain,
+					maintenance, macro control)
+				</li>
+				<li>
+					<strong>Step 2:</strong> Select weekly rate (0.25-1.0 kg/week with
+					calorie deficits)
+				</li>
+				<li>
+					<strong>Step 3:</strong> Confirm activity level (BMR multiplier
+					1.2-1.9)
+				</li>
+				<li>
+					<strong>Step 4:</strong> Review calculated targets and macro breakdown
+				</li>
+			</ul>
+
+			<p style="margin-top: 10px"><strong>CALCULATIONS:</strong></p>
+			<ul style="margin-left: 20px; margin-top: 5px">
+				<li>• BMR from registration data (Mifflin-St Jeor equation)</li>
+				<li>• TDEE = BMR × Activity multiplier</li>
+				<li>• Target calories = TDEE ± deficit/surplus</li>
+				<li>• Macro split: customizable percentages</li>
+				<li>• Real-time updates when changing selections</li>
+			</ul>
+
+			<p style="margin-top: 10px"><strong>UX FEATURES:</strong></p>
+			<ul style="margin-left: 20px; margin-top: 5px">
+				<li>• Progress bar shows completion (25%, 50%, 75%, 100%)</li>
+				<li>• Back navigation to revise previous steps</li>
+				<li>• Skip option with default moderate settings</li>
+				<li>• Recommendations and warnings for extreme selections</li>
+				<li>• Clear visual feedback for selections</li>
+			</ul>
+
+			<p style="margin-top: 10px"><strong>COMPLETION ACTION:</strong></p>
+			<ul style="margin-left: 20px; margin-top: 5px">
+				<li>• Save goals to user profile</li>
+				<li>• Redirect to main dashboard</li>
+				<li>• Show welcome overlay with quick tips</li>
+				<li>• Enable all app features</li>
+			</ul>
+		</div>
+	</body>
+</html>
