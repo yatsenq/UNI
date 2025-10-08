@@ -302,7 +302,7 @@ namespace Lab4_Forms
 
         private void AddSegment(int cylinderIndex, Color color, string text)
         {
-            int segmentHeight = 20;
+            int segmentHeight = 13;
 
             Panel segment = new Panel();
             segment.Size = new Size(88, segmentHeight);

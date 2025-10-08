@@ -135,7 +135,7 @@ class Task3 {
         Publication[] publications = null;
 
         System.out.println("Choose data input method:");
-        System.out.println("1. Use built-in data (hardcoded)");
+        System.out.println("1. Use built-in data.");
         System.out.println("2. Read data from file (publications.txt)");
         System.out.print("Your choice: ");
         int choice = scanner.nextInt();
