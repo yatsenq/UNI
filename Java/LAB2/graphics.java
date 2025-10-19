@@ -5,7 +5,7 @@ import java.awt.geom.*;
 import java.util.Random;
 
 public class PolarFunctionGraph extends JPanel {
-    private static final double A = 1.0;
+    private static final double A = 9.0;
     private static final double M = 0.5;
     
     private Color graphColor = Color.BLUE;
@@ -37,10 +37,6 @@ public class PolarFunctionGraph extends JPanel {
         lineStyle = random.nextInt(3);
     }
     
-    private double calculateR(double phi) {
-        return Math.pow(A, M) * Math.cos(M * phi);
-    }
-    
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -54,7 +50,7 @@ public class PolarFunctionGraph extends JPanel {
         int centerX = width / 2;
         int centerY = height / 2;
         
-        int scale = Math.min(width, height) / 4;
+        int scale = Math.min(width, height) / 7;
         
         g2d.setColor(Color.BLACK);
         g2d.setFont(new Font("Arial", Font.BOLD, 14));
@@ -63,12 +59,8 @@ public class PolarFunctionGraph extends JPanel {
         
         g2d.setColor(Color.BLACK);
         g2d.setStroke(new BasicStroke(1.5f));
-        
         g2d.drawLine(0, centerY, width, centerY);
         g2d.drawLine(centerX, 0, centerX, height);
-        
-        drawArrow(g2d, width - 10, centerY, width, centerY);
-        drawArrow(g2d, centerX, 10, centerX, 0);
         
         g2d.setFont(new Font("Arial", Font.PLAIN, 12));
         g2d.drawString("x", width - 20, centerY - 10);
@@ -150,27 +142,9 @@ public class PolarFunctionGraph extends JPanel {
         g2d.setColor(Color.BLACK);
         g2d.setFont(new Font("Arial", Font.PLAIN, 12));
         String formula = "r = a^m * cos(m*φ)";
-        String params = "m = 1/2, a = 1";
+        String params = "m = 1/2, a = 9";
         g2d.drawString(formula, 10, height - 35);
         g2d.drawString(params, 10, height - 20);
-    }
-    
-    private void drawArrow(Graphics2D g2d, int x1, int y1, int x2, int y2) {
-        int arrowSize = 8;
-        double angle = Math.atan2(y2 - y1, x2 - x1);
-        
-        int[] xPoints = {
-            x2,
-            x2 - (int)(arrowSize * Math.cos(angle - Math.PI / 6)),
-            x2 - (int)(arrowSize * Math.cos(angle + Math.PI / 6))
-        };
-        int[] yPoints = {
-            y2,
-            y2 - (int)(arrowSize * Math.sin(angle - Math.PI / 6)),
-            y2 - (int)(arrowSize * Math.sin(angle + Math.PI / 6))
-        };
-        
-        g2d.fillPolygon(xPoints, yPoints, 3);
     }
     
     public static void main(String[] args) {
@@ -178,7 +152,7 @@ public class PolarFunctionGraph extends JPanel {
             JFrame frame = new JFrame("Графік полярної функції - Яценко, варіант 30");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.add(new PolarFunctionGraph());
-            frame.setSize(800, 600);
+            frame.setSize(1400, 1000);
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
         });

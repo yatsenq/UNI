@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Lab4_Forms")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b86b6e164f9b605c2ff6946c95a0aecb102fc6b8")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4e502f54b024b48e4f05c5527abc2ca566a4232f")]
 [assembly: System.Reflection.AssemblyProductAttribute("Lab4_Forms")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Lab4_Forms")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

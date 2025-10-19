@@ -1,0 +1,15 @@
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab5\FloydAlg\FloydAlg\bin\Debug\net9.0\FloydAlg.exe
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab5\FloydAlg\FloydAlg\bin\Debug\net9.0\FloydAlg.deps.json
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab5\FloydAlg\FloydAlg\bin\Debug\net9.0\FloydAlg.runtimeconfig.json
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab5\FloydAlg\FloydAlg\bin\Debug\net9.0\FloydAlg.dll
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab5\FloydAlg\FloydAlg\bin\Debug\net9.0\FloydAlg.pdb
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab5\FloydAlg\FloydAlg\obj\Debug\net9.0\FloydAlg.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab5\FloydAlg\FloydAlg\obj\Debug\net9.0\FloydAlg.AssemblyInfoInputs.cache
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab5\FloydAlg\FloydAlg\obj\Debug\net9.0\FloydAlg.AssemblyInfo.cs
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab5\FloydAlg\FloydAlg\obj\Debug\net9.0\FloydAlg.csproj.CoreCompileInputs.cache
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab5\FloydAlg\FloydAlg\obj\Debug\net9.0\FloydAlg.sourcelink.json
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab5\FloydAlg\FloydAlg\obj\Debug\net9.0\FloydAlg.dll
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab5\FloydAlg\FloydAlg\obj\Debug\net9.0\refint\FloydAlg.dll
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab5\FloydAlg\FloydAlg\obj\Debug\net9.0\FloydAlg.pdb
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab5\FloydAlg\FloydAlg\obj\Debug\net9.0\FloydAlg.genruntimeconfig.cache
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab5\FloydAlg\FloydAlg\obj\Debug\net9.0\ref\FloydAlg.dll
