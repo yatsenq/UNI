@@ -1,0 +1,15 @@
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab6\DijkstraAlg\DijkstraAlg\bin\Debug\net9.0\DijkstraAlg.exe
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab6\DijkstraAlg\DijkstraAlg\bin\Debug\net9.0\DijkstraAlg.deps.json
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab6\DijkstraAlg\DijkstraAlg\bin\Debug\net9.0\DijkstraAlg.runtimeconfig.json
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab6\DijkstraAlg\DijkstraAlg\bin\Debug\net9.0\DijkstraAlg.dll
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab6\DijkstraAlg\DijkstraAlg\bin\Debug\net9.0\DijkstraAlg.pdb
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab6\DijkstraAlg\DijkstraAlg\obj\Debug\net9.0\DijkstraAlg.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab6\DijkstraAlg\DijkstraAlg\obj\Debug\net9.0\DijkstraAlg.AssemblyInfoInputs.cache
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab6\DijkstraAlg\DijkstraAlg\obj\Debug\net9.0\DijkstraAlg.AssemblyInfo.cs
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab6\DijkstraAlg\DijkstraAlg\obj\Debug\net9.0\DijkstraAlg.csproj.CoreCompileInputs.cache
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab6\DijkstraAlg\DijkstraAlg\obj\Debug\net9.0\DijkstraAlg.sourcelink.json
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab6\DijkstraAlg\DijkstraAlg\obj\Debug\net9.0\DijkstraAlg.dll
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab6\DijkstraAlg\DijkstraAlg\obj\Debug\net9.0\refint\DijkstraAlg.dll
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab6\DijkstraAlg\DijkstraAlg\obj\Debug\net9.0\DijkstraAlg.pdb
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab6\DijkstraAlg\DijkstraAlg\obj\Debug\net9.0\DijkstraAlg.genruntimeconfig.cache
+C:\Users\igrew\OneDrive\Desktop\UNI\ParallelObch\Lab6\DijkstraAlg\DijkstraAlg\obj\Debug\net9.0\ref\DijkstraAlg.dll
