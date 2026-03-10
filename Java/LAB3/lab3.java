@@ -5,6 +5,7 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.ArrayList;
 
+//1. графічне застосування
 public class SimpleBrowser extends JFrame {
     private JEditorPane editorPane;
     private JTextField urlField;
@@ -45,7 +46,8 @@ public class SimpleBrowser extends JFrame {
 
     private void createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
-
+        
+        // меню
         JMenu fileMenu = new JMenu("Файл");
         JMenuItem openItem = new JMenuItem("Відкрити URL");
         JMenuItem saveItem = new JMenuItem("Зберегти сторінку");
@@ -94,6 +96,7 @@ public class SimpleBrowser extends JFrame {
         toolBar = new JToolBar();
         toolBar.setFloatable(false);
 
+        //кнопки навігації(панель інструментів)
         backButton = new JButton("◄ Назад");
         backButton.setEnabled(false);
         backButton.addActionListener(e -> navigateBack());
@@ -123,18 +126,18 @@ public class SimpleBrowser extends JFrame {
         goButton.addActionListener(e -> loadPage(urlField.getText(), true));
         toolBar.add(goButton);
 
-        add(toolBar, BorderLayout.NORTH);
+        add(toolBar, BorderLayout.NORTH); // менеджер розміщення
     }
 
     private void createMainPanel() {
         mainPanel = new JPanel(new BorderLayout(5, 5));
 
         leftPanel = new JPanel();
-        leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
+        leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS)); //менеджер розміщення
         leftPanel.setBorder(BorderFactory.createTitledBorder("Історія"));
         leftPanel.setPreferredSize(new Dimension(150, 0));
 
-        historyList = new JList<>(historyModel);
+        historyList = new JList<>(historyModel); //список
         historyList.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 String selectedUrl = historyList.getSelectedValue();
@@ -157,7 +160,7 @@ public class SimpleBrowser extends JFrame {
             }
         });
 
-        JPopupMenu popupMenu = new JPopupMenu();
+        JPopupMenu popupMenu = new JPopupMenu(); // спливаюче меню
         JMenuItem copyItem = new JMenuItem("Копіювати");
         JMenuItem selectAllItem = new JMenuItem("Виділити все");
         JMenuItem addFavItem = new JMenuItem("Додати в закладки");
@@ -171,23 +174,24 @@ public class SimpleBrowser extends JFrame {
         popupMenu.addSeparator();
         popupMenu.add(addFavItem);
 
+        // при пкм вилазить 
         editorPane.setComponentPopupMenu(popupMenu);
 
         JScrollPane scrollPane = new JScrollPane(editorPane);
 
         rightPanel = new JPanel();
-        rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
+        rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS)); //менеджер розміщення
         rightPanel.setBorder(BorderFactory.createTitledBorder("Опції"));
         rightPanel.setPreferredSize(new Dimension(150, 0));
 
-        darkModeCheckBox = new JCheckBox("Темна тема", false);
+        darkModeCheckBox = new JCheckBox("Темна тема", false); //прапорець
         darkModeCheckBox.addActionListener(e -> {
             toggleDarkMode(darkModeCheckBox.isSelected());
             statusLabel.setText("Тема: " + (darkModeCheckBox.isSelected() ? "Темна" : "Світла"));
         });
 
         ButtonGroup group = new ButtonGroup();
-        homePageRadio = new JRadioButton("Google (за замовчуванням)", true);
+        homePageRadio = new JRadioButton("Google (за замовчуванням)", true); //перемикачі
         customPageRadio = new JRadioButton("Власна сторінка");
         group.add(homePageRadio);
         group.add(customPageRadio);
@@ -223,10 +227,10 @@ public class SimpleBrowser extends JFrame {
     }
 
     private void createStatusBar() {
-        statusPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        statusLabel = new JLabel("Готовий");
+        statusPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); //менеджер розміщення
+        statusLabel = new JLabel("Готовий"); //рядок стану
         statusPanel.add(statusLabel);
-        add(statusPanel, BorderLayout.SOUTH);
+        add(statusPanel, BorderLayout.SOUTH);//менеджер розміщення
     }
 
     private void toggleDarkMode(boolean isDark) {
@@ -370,7 +374,7 @@ public class SimpleBrowser extends JFrame {
     }
 
     private void openURL() {
-        String url = JOptionPane.showInputDialog(this, "Введіть URL:", 
+        String url = JOptionPane.showInputDialog(this, "Введіть URL:",  // діалогові вікна(стандартне)
             "Відкрити URL", JOptionPane.PLAIN_MESSAGE);
         if (url != null && !url.trim().isEmpty()) {
             loadPage(url, true);
@@ -378,7 +382,7 @@ public class SimpleBrowser extends JFrame {
     }
 
     private void savePage() {
-        JFileChooser fileChooser = new JFileChooser();
+        JFileChooser fileChooser = new JFileChooser(); // діалогові вікна(стандартне)
         fileChooser.setDialogTitle("Зберегти сторінку");
         int result = fileChooser.showSaveDialog(this);
         
@@ -403,7 +407,7 @@ public class SimpleBrowser extends JFrame {
         if (!currentUrl.isEmpty() && !favorites.contains(currentUrl)) {
             favorites.add(currentUrl);
             statusLabel.setText("Додано в закладки: " + currentUrl);
-            JOptionPane.showMessageDialog(this, "Сторінку додано в закладки!");
+            JOptionPane.showMessageDialog(this, "Сторінку додано в закладки!"); // діалогові вікна(стандартне)
         } else if (favorites.contains(currentUrl)) {
             JOptionPane.showMessageDialog(this, "Ця сторінка вже є в закладках!");
         }
@@ -415,7 +419,7 @@ public class SimpleBrowser extends JFrame {
             return;
         }
         
-        String[] favArray = favorites.toArray(new String[0]);
+        String[] favArray = favorites.toArray(new String[0]); //діалогові вікна(стандартне)
         String selected = (String) JOptionPane.showInputDialog(this,
             "Виберіть закладку:", "Закладки",
             JOptionPane.PLAIN_MESSAGE, null, favArray, favArray[0]);
@@ -431,12 +435,12 @@ public class SimpleBrowser extends JFrame {
             return;
         }
 
-        JDialog manageDialog = new JDialog(this, "Керування закладками", true);
+        JDialog manageDialog = new JDialog(this, "Керування закладками", true);//діалогові вікна(власні)
         manageDialog.setSize(500, 400);
         manageDialog.setLocationRelativeTo(this);
         manageDialog.setLayout(new BorderLayout(10, 10));
 
-        DefaultListModel<String> favModel = new DefaultListModel<>();
+        DefaultListModel<String> favModel = new DefaultListModel<>(); //список
         for (String fav : favorites) {
             favModel.addElement(fav);
         }
@@ -489,7 +493,7 @@ public class SimpleBrowser extends JFrame {
     }
 
     private void showSettingsDialog() {
-        JDialog settingsDialog = new JDialog(this, "Налаштування", true);
+        JDialog settingsDialog = new JDialog(this, "Налаштування", true);//діалогові вікна(власні налаштування)
         settingsDialog.setSize(400, 300);
         settingsDialog.setLocationRelativeTo(this);
         settingsDialog.setLayout(new BorderLayout(10, 10));
@@ -570,3 +574,10 @@ public class SimpleBrowser extends JFrame {
         SwingUtilities.invokeLater(() -> new SimpleBrowser());
     }
 }
+
+//http://example.com
+//http://info.cern.ch
+//file:///C:/Users/igrew/OneDrive/Desktop/UNI/Java/LAB3/test.html
+
+
+

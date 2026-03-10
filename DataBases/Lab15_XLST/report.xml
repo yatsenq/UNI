@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+
+<xsl:template match="/">
+<html>
+<head>
+    <title>Страхова база даних</title>
+    <style>
+        body {
+            font-family: Verdana;
+            margin: 30px;
+        }
+        h1 {
+            color: navy;
+        }
+        h2 {
+            color: green;
+            border-bottom: 2px solid green;
+        }
+        table {
+            border: 2px solid black;
+            width: 100%;
+            margin-bottom: 30px;
+        }
+        th {
+            background-color: lightblue;
+            padding: 8px;
+            border: 1px solid black;
+        }
+        td {
+            padding: 5px;
+            border: 1px solid gray;
+        }
+        .active {
+            background-color: lightgreen;
+        }
+        .cancelled {
+            background-color: pink;
+        }
+        .completed {
+            background-color: lightyellow;
+        }
+        .suspended {
+            background-color: orange;
+        }
+        ul {
+            list-style-type: square;
+        }
+        .highlight {
+            background-color: lightcoral;
+        }
+        .type-header { background-color: #e0e0e0; font-weight: bold; text-align: left; padding: 10px; }
+    </style>
+</head>
+<body>
+
+    <h1>Звіт по договорам страхування</h1>
+    
+    <p><b>Загальна кількість договорів:</b> <xsl:value-of select="count(//agreement)"/></p>
+    
+    <h2>Всі договори</h2>
+    <table>
+        <tr>
+            <th>N</th>
+            <th>ID договору</th>
+            <th>Статус</th>
+            <th>Дата</th>
+            <th>Сума страхування</th>
+            <th>Термін (міс)</th>
+        </tr>
+        
+        <xsl:for-each select="//agreement">
+            <xsl:sort select="@id" data-type="number"/>
+            
+            <xsl:variable name="status-class">
+                <xsl:choose>
+                    <xsl:when test="@status='Active'">active</xsl:when>
+                    <xsl:when test="@status='Cancelled'">cancelled</xsl:when>
+                    <xsl:when test="@status='Completed'">completed</xsl:when>
+                    <xsl:when test="@status='Suspended'">suspended</xsl:when>
+                </xsl:choose>
+            </xsl:variable>
+            
+            <tr class="{$status-class}">
+                <td><xsl:number/></td>
+                <td><xsl:value-of select="@id"/></td>
+                <td><xsl:value-of select="@status"/></td>
+                <td><xsl:value-of select="conclusion_date"/></td>
+                <td><xsl:value-of select="total_insurance_amount"/></td>
+                <td><xsl:value-of select="duration_months"/></td>
+            </tr>
+        </xsl:for-each>
+    </table>
+
+    <h2>Договори зі статусом Active</h2>
+    <table>
+        <tr>
+            <th>N</th>
+            <th>ID</th>
+            <th>Дата укладення</th>
+            <th>Сума</th>
+        </tr>
+        
+        <xsl:for-each select="//agreement[@status='Active']">
+            <xsl:sort select="conclusion_date"/>
+            
+            <tr class="active">
+                <td><xsl:number format="1"/></td>
+                <td><xsl:value-of select="@id"/></td>
+                <td><xsl:value-of select="conclusion_date"/></td>
+                <td><xsl:value-of select="total_insurance_amount"/></td>
+            </tr>
+        </xsl:for-each>
+    </table>
+
+    <h2>Договори з великою сумою (більше 3000000)</h2>
+    <table>
+        <tr>
+            <th>N</th>
+            <th>ID</th>
+            <th>Статус</th>
+            <th>Сума страхування</th>
+        </tr>
+        
+        <xsl:for-each select="//agreement">
+            <xsl:sort select="total_insurance_amount" data-type="number" order="descending"/>
+            
+            <xsl:if test="total_insurance_amount &gt; 3000000">
+                <tr>
+                    <td><xsl:number/></td>
+                    <td><xsl:value-of select="@id"/></td>
+                    <td><xsl:value-of select="@status"/></td>
+                    <td style="font-weight: bold; color: red;">
+                        <xsl:value-of select="total_insurance_amount"/>
+                    </td>
+                </tr>
+            </xsl:if>
+        </xsl:for-each>
+    </table>
+
+    <h2>Договори з тривалістю більше 24 місяців</h2>
+    <table>
+        <tr>
+            <th>N</th>
+            <th>ID договору</th>
+            <th>Статус</th>
+            <th>Тривалість (міс)</th>
+            <th>Дата укладення</th>
+        </tr>
+        
+        <xsl:for-each select="//agreement">
+            <xsl:sort select="duration_months" data-type="number" order="descending"/>
+            
+            <xsl:if test="duration_months &gt; 24">
+                <tr class="highlight">
+                    <td><xsl:number format="1"/></td>
+                    <td><xsl:value-of select="@id"/></td>
+                    <td><xsl:value-of select="@status"/></td>
+                    <td style="font-weight: bold;">
+                        <xsl:value-of select="duration_months"/>
+                    </td>
+                    <td><xsl:value-of select="conclusion_date"/></td>
+                </tr>
+            </xsl:if>
+        </xsl:for-each>
+    </table>
+
+    <h2>Поліси за типом страхування</h2>
+    <table>
+        <tr>
+            <th>N</th>
+            <th>ID полісу</th>
+            <th>Тип об'єкта</th>
+            <th>Опис майна</th>
+            <th>Вартість майна</th>
+        </tr>
+        
+        <xsl:for-each select="//insurance_object">
+            <xsl:sort select="@type"/>
+            
+            <tr>
+                <td><xsl:number format="1"/></td>
+                <td><xsl:value-of select="@id"/></td>
+                <td>
+                    <xsl:choose>
+                        <xsl:when test="@type='Vehicle'">
+                            <b>Транспорт</b>
+                        </xsl:when>
+                        <xsl:when test="@type='Health'">
+                            <b>Здоров'я</b>
+                        </xsl:when>
+                        <xsl:when test="@type='RealEstate'">
+                            <b>Нерухомість</b>
+                        </xsl:when>
+                        <xsl:when test="@type='Life'">
+                            <b>Життя</b>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <b>Інше</b>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </td>
+                <td><xsl:value-of select="property/prop/description"/></td>
+                <td><xsl:value-of select="property/prop/value"/></td>
+            </tr>
+        </xsl:for-each>
+    </table>
+
+    <h2>Список застрахованих осіб</h2>
+    
+    <xsl:for-each select="//agreement">
+        <xsl:sort select="@id" data-type="number"/>
+        
+        <p>
+            <b>Договір <xsl:number format="1"/>:</b> 
+            ID <xsl:value-of select="@id"/>, 
+            статус: <xsl:value-of select="@status"/>
+        </p>
+        
+        <ul>
+            <xsl:for-each select=".//insured">
+                <li>
+                    <xsl:value-of select="person/pers/first_name"/>
+                    <xsl:text> </xsl:text>
+                    <xsl:value-of select="person/pers/last_name"/>
+                    
+                    <xsl:if test="phone_number">
+                        , тел: <xsl:value-of select="phone_number"/>
+                    </xsl:if>
+                    
+                    <xsl:choose>
+                        <xsl:when test=".//insurance_object/@type='Vehicle'">
+                            (Транспорт)
+                        </xsl:when>
+                        <xsl:when test=".//insurance_object/@type='Health'">
+                            (Здоров'я)
+                        </xsl:when>
+                        <xsl:when test=".//insurance_object/@type='RealEstate'">
+                            (Нерухомість)
+                        </xsl:when>
+                        <xsl:otherwise>
+                            (Інше)
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </li>
+            </xsl:for-each>
+        </ul>
+    </xsl:for-each>
+
+    <h2>Договори страхування майна</h2>
+    <table>
+        <tr>
+            <th>Номер</th>
+            <th>ID договору</th>
+            <th>Опис майна</th>
+            <th>Вартість страхування</th>
+            <th>Опис страхування</th>
+            <th>Дата договору</th>
+        </tr>
+
+        <xsl:for-each select="//insurance_object[@type!='Health']/@type[not(.=preceding::insurance_object/@type)]">
+            <xsl:variable name="current-type" select="."/>
+            <tr>
+                <td colspan='6' class="type-header"> </td>
+                Тип страхування: <xsl:value-of select="$current-type"/>
+            </tr>
+        <xsl:for-each select="//insurance_object[@type=$current-type]">
+            <xsl:sort select="ancestor::agreement/conclusion_date" order="ascending"/>
+            
+            <tr>
+                <td><xsl:number level="any" count="insurance_object[@type!='Health']"/></td>
+                <td><xsl:value-of select="ancestor::agreement/@id"/></td>
+                <td><xsl:value-of select=".//property/prop/description"/></td>
+                <td><xsl:value-of select=".//property/prop/value"/></td>
+                <td><xsl:value-of select="@type"/></td>
+                <td><xsl:value-of select="ancestor::agreement/conclusion_date"/></td>
+            </tr>
+            </xsl:for-each>
+        </xsl:for-each>
+
+    </table>
+
+    <hr/>
+    <p style="color: gray; font-size: 12px;">
+        Система: <xsl:value-of select="//insurance_database/@system"/><br/>
+        Дата: <xsl:value-of select="//insurance_database/@export_date"/>
+    </p>
+
+</body>
+</html>
+</xsl:template>
+
+</xsl:stylesheet>

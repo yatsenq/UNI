@@ -1,0 +1,2025 @@
+<html>
+	<head>
+		<title>Страхова база даних</title>
+		<style>
+			body {
+				font-family: Verdana;
+				margin: 30px;
+			}
+			h1 {
+				color: navy;
+			}
+			h2 {
+				color: green;
+				border-bottom: 2px solid green;
+			}
+			table {
+				border: 2px solid black;
+				width: 100%;
+				margin-bottom: 30px;
+			}
+			th {
+				background-color: lightblue;
+				padding: 8px;
+				border: 1px solid black;
+			}
+			td {
+				padding: 5px;
+				border: 1px solid gray;
+			}
+			.active {
+				background-color: lightgreen;
+			}
+			.cancelled {
+				background-color: pink;
+			}
+			.completed {
+				background-color: lightyellow;
+			}
+			.suspended {
+				background-color: orange;
+			}
+			ul {
+				list-style-type: square;
+			}
+			.highlight {
+				background-color: lightcoral;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Звіт по договорам страхування</h1>
+		<p><b>Загальна кількість договорів:</b>50</p>
+		<h2>Всі договори</h2>
+		<table>
+			<tr>
+				<th>N</th>
+				<th>ID договору</th>
+				<th>Статус</th>
+				<th>Дата</th>
+				<th>Сума страхування</th>
+				<th>Термін (міс)</th>
+			</tr>
+			<tr class="suspended">
+				<td>49</td>
+				<td>4</td>
+				<td>Suspended</td>
+				<td>2024-12-08</td>
+				<td>961786.77</td>
+				<td>6</td>
+			</tr>
+			<tr class="cancelled">
+				<td>1</td>
+				<td>5</td>
+				<td>Cancelled</td>
+				<td>2022-04-02</td>
+				<td>430371.97</td>
+				<td>24</td>
+			</tr>
+			<tr class="active">
+				<td>2</td>
+				<td>10</td>
+				<td>Active</td>
+				<td>2023-10-16</td>
+				<td>1000853.76</td>
+				<td>36</td>
+			</tr>
+			<tr class="active">
+				<td>3</td>
+				<td>11</td>
+				<td>Active</td>
+				<td>2023-08-19</td>
+				<td>1888137.60</td>
+				<td>48</td>
+			</tr>
+			<tr class="active">
+				<td>4</td>
+				<td>12</td>
+				<td>Active</td>
+				<td>2024-04-25</td>
+				<td>2749832.93</td>
+				<td>24</td>
+			</tr>
+			<tr class="active">
+				<td>5</td>
+				<td>14</td>
+				<td>Active</td>
+				<td>2022-01-04</td>
+				<td>2461146.77</td>
+				<td>60</td>
+			</tr>
+			<tr class="active">
+				<td>6</td>
+				<td>15</td>
+				<td>Active</td>
+				<td>2024-10-15</td>
+				<td>3770385.01</td>
+				<td>48</td>
+			</tr>
+			<tr class="completed">
+				<td>7</td>
+				<td>18</td>
+				<td>Completed</td>
+				<td>2022-05-23</td>
+				<td>3236246.13</td>
+				<td>48</td>
+			</tr>
+			<tr class="active">
+				<td>8</td>
+				<td>20</td>
+				<td>Active</td>
+				<td>2024-03-14</td>
+				<td>822036.22</td>
+				<td>36</td>
+			</tr>
+			<tr class="active">
+				<td>9</td>
+				<td>21</td>
+				<td>Active</td>
+				<td>2024-09-22</td>
+				<td>4400375.54</td>
+				<td>6</td>
+			</tr>
+			<tr class="active">
+				<td>10</td>
+				<td>24</td>
+				<td>Active</td>
+				<td>2023-10-16</td>
+				<td>3730011.15</td>
+				<td>36</td>
+			</tr>
+			<tr class="active">
+				<td>11</td>
+				<td>25</td>
+				<td>Active</td>
+				<td>2024-12-27</td>
+				<td>4887697.36</td>
+				<td>24</td>
+			</tr>
+			<tr class="active">
+				<td>12</td>
+				<td>26</td>
+				<td>Active</td>
+				<td>2024-12-24</td>
+				<td>1230436.04</td>
+				<td>36</td>
+			</tr>
+			<tr class="cancelled">
+				<td>13</td>
+				<td>27</td>
+				<td>Cancelled</td>
+				<td>2024-08-29</td>
+				<td>1015460.63</td>
+				<td>60</td>
+			</tr>
+			<tr class="active">
+				<td>14</td>
+				<td>29</td>
+				<td>Active</td>
+				<td>2022-12-14</td>
+				<td>4390180.08</td>
+				<td>6</td>
+			</tr>
+			<tr class="completed">
+				<td>15</td>
+				<td>31</td>
+				<td>Completed</td>
+				<td>2024-07-06</td>
+				<td>2448611.35</td>
+				<td>36</td>
+			</tr>
+			<tr class="active">
+				<td>16</td>
+				<td>32</td>
+				<td>Active</td>
+				<td>2022-02-21</td>
+				<td>800319.49</td>
+				<td>6</td>
+			</tr>
+			<tr class="active">
+				<td>17</td>
+				<td>33</td>
+				<td>Active</td>
+				<td>2022-01-02</td>
+				<td>1203084.99</td>
+				<td>36</td>
+			</tr>
+			<tr class="active">
+				<td>18</td>
+				<td>34</td>
+				<td>Active</td>
+				<td>2022-05-13</td>
+				<td>3444838.50</td>
+				<td>6</td>
+			</tr>
+			<tr class="completed">
+				<td>19</td>
+				<td>37</td>
+				<td>Completed</td>
+				<td>2022-02-11</td>
+				<td>3141509.86</td>
+				<td>12</td>
+			</tr>
+			<tr class="suspended">
+				<td>50</td>
+				<td>38</td>
+				<td>Suspended</td>
+				<td>2024-07-25</td>
+				<td>4067228.16</td>
+				<td>36</td>
+			</tr>
+			<tr class="completed">
+				<td>20</td>
+				<td>40</td>
+				<td>Completed</td>
+				<td>2022-05-23</td>
+				<td>3891545.15</td>
+				<td>48</td>
+			</tr>
+			<tr class="active">
+				<td>21</td>
+				<td>42</td>
+				<td>Active</td>
+				<td>2024-08-09</td>
+				<td>2524413.31</td>
+				<td>36</td>
+			</tr>
+			<tr class="active">
+				<td>22</td>
+				<td>45</td>
+				<td>Active</td>
+				<td>2022-05-15</td>
+				<td>1501560.72</td>
+				<td>6</td>
+			</tr>
+			<tr class="active">
+				<td>23</td>
+				<td>49</td>
+				<td>Active</td>
+				<td>2023-08-05</td>
+				<td>2511364.34</td>
+				<td>6</td>
+			</tr>
+			<tr class="cancelled">
+				<td>24</td>
+				<td>50</td>
+				<td>Cancelled</td>
+				<td>2024-05-20</td>
+				<td>3731048.06</td>
+				<td>12</td>
+			</tr>
+			<tr class="active">
+				<td>25</td>
+				<td>51</td>
+				<td>Active</td>
+				<td>2023-11-08</td>
+				<td>1796529.25</td>
+				<td>6</td>
+			</tr>
+			<tr class="active">
+				<td>26</td>
+				<td>52</td>
+				<td>Active</td>
+				<td>2023-09-23</td>
+				<td>3671925.57</td>
+				<td>24</td>
+			</tr>
+			<tr class="active">
+				<td>27</td>
+				<td>53</td>
+				<td>Active</td>
+				<td>2024-01-24</td>
+				<td>244600.37</td>
+				<td>6</td>
+			</tr>
+			<tr class="active">
+				<td>28</td>
+				<td>54</td>
+				<td>Active</td>
+				<td>2022-08-15</td>
+				<td>568126.41</td>
+				<td>24</td>
+			</tr>
+			<tr class="active">
+				<td>29</td>
+				<td>57</td>
+				<td>Active</td>
+				<td>2022-12-16</td>
+				<td>2753736.51</td>
+				<td>6</td>
+			</tr>
+			<tr class="active">
+				<td>30</td>
+				<td>58</td>
+				<td>Active</td>
+				<td>2024-07-11</td>
+				<td>714193.39</td>
+				<td>24</td>
+			</tr>
+			<tr class="active">
+				<td>31</td>
+				<td>59</td>
+				<td>Active</td>
+				<td>2023-04-26</td>
+				<td>4056113.54</td>
+				<td>12</td>
+			</tr>
+			<tr class="active">
+				<td>32</td>
+				<td>60</td>
+				<td>Active</td>
+				<td>2023-06-08</td>
+				<td>4684448.17</td>
+				<td>36</td>
+			</tr>
+			<tr class="active">
+				<td>33</td>
+				<td>63</td>
+				<td>Active</td>
+				<td>2023-10-06</td>
+				<td>2203327.03</td>
+				<td>12</td>
+			</tr>
+			<tr class="active">
+				<td>34</td>
+				<td>64</td>
+				<td>Active</td>
+				<td>2022-01-05</td>
+				<td>475301.35</td>
+				<td>24</td>
+			</tr>
+			<tr class="cancelled">
+				<td>35</td>
+				<td>67</td>
+				<td>Cancelled</td>
+				<td>2022-11-15</td>
+				<td>3090346.04</td>
+				<td>60</td>
+			</tr>
+			<tr class="active">
+				<td>36</td>
+				<td>70</td>
+				<td>Active</td>
+				<td>2022-06-18</td>
+				<td>3284852.27</td>
+				<td>48</td>
+			</tr>
+			<tr class="active">
+				<td>37</td>
+				<td>71</td>
+				<td>Active</td>
+				<td>2022-11-29</td>
+				<td>501920.83</td>
+				<td>6</td>
+			</tr>
+			<tr class="cancelled">
+				<td>38</td>
+				<td>72</td>
+				<td>Cancelled</td>
+				<td>2022-01-19</td>
+				<td>145956.43</td>
+				<td>48</td>
+			</tr>
+			<tr class="cancelled">
+				<td>39</td>
+				<td>73</td>
+				<td>Cancelled</td>
+				<td>2024-03-06</td>
+				<td>1452230.61</td>
+				<td>48</td>
+			</tr>
+			<tr class="active">
+				<td>40</td>
+				<td>74</td>
+				<td>Active</td>
+				<td>2024-12-03</td>
+				<td>1143162.24</td>
+				<td>6</td>
+			</tr>
+			<tr class="active">
+				<td>41</td>
+				<td>75</td>
+				<td>Active</td>
+				<td>2022-06-02</td>
+				<td>2125951.94</td>
+				<td>6</td>
+			</tr>
+			<tr class="active">
+				<td>42</td>
+				<td>76</td>
+				<td>Active</td>
+				<td>2023-12-15</td>
+				<td>4172677.27</td>
+				<td>48</td>
+			</tr>
+			<tr class="suspended">
+				<td>48</td>
+				<td>77</td>
+				<td>Suspended</td>
+				<td>2024-09-01</td>
+				<td>46550.56</td>
+				<td>6</td>
+			</tr>
+			<tr class="active">
+				<td>43</td>
+				<td>78</td>
+				<td>Active</td>
+				<td>2024-02-03</td>
+				<td>600875.74</td>
+				<td>60</td>
+			</tr>
+			<tr class="completed">
+				<td>44</td>
+				<td>79</td>
+				<td>Completed</td>
+				<td>2023-11-16</td>
+				<td>4394912.77</td>
+				<td>6</td>
+			</tr>
+			<tr class="active">
+				<td>45</td>
+				<td>83</td>
+				<td>Active</td>
+				<td>2023-04-19</td>
+				<td>3096623.02</td>
+				<td>24</td>
+			</tr>
+			<tr class="active">
+				<td>46</td>
+				<td>84</td>
+				<td>Active</td>
+				<td>2023-06-28</td>
+				<td>4108245.49</td>
+				<td>12</td>
+			</tr>
+			<tr class="completed">
+				<td>47</td>
+				<td>85</td>
+				<td>Completed</td>
+				<td>2024-01-30</td>
+				<td>4759705.89</td>
+				<td>12</td>
+			</tr>
+		</table>
+		<h2>Договори зі статусом Active</h2>
+		<table>
+			<tr>
+				<th>N</th>
+				<th>ID</th>
+				<th>Дата укладення</th>
+				<th>Сума</th>
+			</tr>
+			<tr class="active">
+				<td>17</td>
+				<td>33</td>
+				<td>2022-01-02</td>
+				<td>1203084.99</td>
+			</tr>
+			<tr class="active">
+				<td>5</td>
+				<td>14</td>
+				<td>2022-01-04</td>
+				<td>2461146.77</td>
+			</tr>
+			<tr class="active">
+				<td>34</td>
+				<td>64</td>
+				<td>2022-01-05</td>
+				<td>475301.35</td>
+			</tr>
+			<tr class="active">
+				<td>16</td>
+				<td>32</td>
+				<td>2022-02-21</td>
+				<td>800319.49</td>
+			</tr>
+			<tr class="active">
+				<td>18</td>
+				<td>34</td>
+				<td>2022-05-13</td>
+				<td>3444838.50</td>
+			</tr>
+			<tr class="active">
+				<td>22</td>
+				<td>45</td>
+				<td>2022-05-15</td>
+				<td>1501560.72</td>
+			</tr>
+			<tr class="active">
+				<td>41</td>
+				<td>75</td>
+				<td>2022-06-02</td>
+				<td>2125951.94</td>
+			</tr>
+			<tr class="active">
+				<td>36</td>
+				<td>70</td>
+				<td>2022-06-18</td>
+				<td>3284852.27</td>
+			</tr>
+			<tr class="active">
+				<td>28</td>
+				<td>54</td>
+				<td>2022-08-15</td>
+				<td>568126.41</td>
+			</tr>
+			<tr class="active">
+				<td>37</td>
+				<td>71</td>
+				<td>2022-11-29</td>
+				<td>501920.83</td>
+			</tr>
+			<tr class="active">
+				<td>14</td>
+				<td>29</td>
+				<td>2022-12-14</td>
+				<td>4390180.08</td>
+			</tr>
+			<tr class="active">
+				<td>29</td>
+				<td>57</td>
+				<td>2022-12-16</td>
+				<td>2753736.51</td>
+			</tr>
+			<tr class="active">
+				<td>45</td>
+				<td>83</td>
+				<td>2023-04-19</td>
+				<td>3096623.02</td>
+			</tr>
+			<tr class="active">
+				<td>31</td>
+				<td>59</td>
+				<td>2023-04-26</td>
+				<td>4056113.54</td>
+			</tr>
+			<tr class="active">
+				<td>32</td>
+				<td>60</td>
+				<td>2023-06-08</td>
+				<td>4684448.17</td>
+			</tr>
+			<tr class="active">
+				<td>46</td>
+				<td>84</td>
+				<td>2023-06-28</td>
+				<td>4108245.49</td>
+			</tr>
+			<tr class="active">
+				<td>23</td>
+				<td>49</td>
+				<td>2023-08-05</td>
+				<td>2511364.34</td>
+			</tr>
+			<tr class="active">
+				<td>3</td>
+				<td>11</td>
+				<td>2023-08-19</td>
+				<td>1888137.60</td>
+			</tr>
+			<tr class="active">
+				<td>26</td>
+				<td>52</td>
+				<td>2023-09-23</td>
+				<td>3671925.57</td>
+			</tr>
+			<tr class="active">
+				<td>33</td>
+				<td>63</td>
+				<td>2023-10-06</td>
+				<td>2203327.03</td>
+			</tr>
+			<tr class="active">
+				<td>2</td>
+				<td>10</td>
+				<td>2023-10-16</td>
+				<td>1000853.76</td>
+			</tr>
+			<tr class="active">
+				<td>10</td>
+				<td>24</td>
+				<td>2023-10-16</td>
+				<td>3730011.15</td>
+			</tr>
+			<tr class="active">
+				<td>25</td>
+				<td>51</td>
+				<td>2023-11-08</td>
+				<td>1796529.25</td>
+			</tr>
+			<tr class="active">
+				<td>42</td>
+				<td>76</td>
+				<td>2023-12-15</td>
+				<td>4172677.27</td>
+			</tr>
+			<tr class="active">
+				<td>27</td>
+				<td>53</td>
+				<td>2024-01-24</td>
+				<td>244600.37</td>
+			</tr>
+			<tr class="active">
+				<td>43</td>
+				<td>78</td>
+				<td>2024-02-03</td>
+				<td>600875.74</td>
+			</tr>
+			<tr class="active">
+				<td>8</td>
+				<td>20</td>
+				<td>2024-03-14</td>
+				<td>822036.22</td>
+			</tr>
+			<tr class="active">
+				<td>4</td>
+				<td>12</td>
+				<td>2024-04-25</td>
+				<td>2749832.93</td>
+			</tr>
+			<tr class="active">
+				<td>30</td>
+				<td>58</td>
+				<td>2024-07-11</td>
+				<td>714193.39</td>
+			</tr>
+			<tr class="active">
+				<td>21</td>
+				<td>42</td>
+				<td>2024-08-09</td>
+				<td>2524413.31</td>
+			</tr>
+			<tr class="active">
+				<td>9</td>
+				<td>21</td>
+				<td>2024-09-22</td>
+				<td>4400375.54</td>
+			</tr>
+			<tr class="active">
+				<td>6</td>
+				<td>15</td>
+				<td>2024-10-15</td>
+				<td>3770385.01</td>
+			</tr>
+			<tr class="active">
+				<td>40</td>
+				<td>74</td>
+				<td>2024-12-03</td>
+				<td>1143162.24</td>
+			</tr>
+			<tr class="active">
+				<td>12</td>
+				<td>26</td>
+				<td>2024-12-24</td>
+				<td>1230436.04</td>
+			</tr>
+			<tr class="active">
+				<td>11</td>
+				<td>25</td>
+				<td>2024-12-27</td>
+				<td>4887697.36</td>
+			</tr>
+		</table>
+		<h2>Договори з великою сумою (більше 3000000)</h2>
+		<table>
+			<tr>
+				<th>N</th>
+				<th>ID</th>
+				<th>Статус</th>
+				<th>Сума страхування</th>
+			</tr>
+			<tr>
+				<td>11</td>
+				<td>25</td>
+				<td>Active</td>
+				<td style="font-weight: bold; color: red">4887697.36</td>
+			</tr>
+			<tr>
+				<td>47</td>
+				<td>85</td>
+				<td>Completed</td>
+				<td style="font-weight: bold; color: red">4759705.89</td>
+			</tr>
+			<tr>
+				<td>32</td>
+				<td>60</td>
+				<td>Active</td>
+				<td style="font-weight: bold; color: red">4684448.17</td>
+			</tr>
+			<tr>
+				<td>9</td>
+				<td>21</td>
+				<td>Active</td>
+				<td style="font-weight: bold; color: red">4400375.54</td>
+			</tr>
+			<tr>
+				<td>44</td>
+				<td>79</td>
+				<td>Completed</td>
+				<td style="font-weight: bold; color: red">4394912.77</td>
+			</tr>
+			<tr>
+				<td>14</td>
+				<td>29</td>
+				<td>Active</td>
+				<td style="font-weight: bold; color: red">4390180.08</td>
+			</tr>
+			<tr>
+				<td>42</td>
+				<td>76</td>
+				<td>Active</td>
+				<td style="font-weight: bold; color: red">4172677.27</td>
+			</tr>
+			<tr>
+				<td>46</td>
+				<td>84</td>
+				<td>Active</td>
+				<td style="font-weight: bold; color: red">4108245.49</td>
+			</tr>
+			<tr>
+				<td>50</td>
+				<td>38</td>
+				<td>Suspended</td>
+				<td style="font-weight: bold; color: red">4067228.16</td>
+			</tr>
+			<tr>
+				<td>31</td>
+				<td>59</td>
+				<td>Active</td>
+				<td style="font-weight: bold; color: red">4056113.54</td>
+			</tr>
+			<tr>
+				<td>20</td>
+				<td>40</td>
+				<td>Completed</td>
+				<td style="font-weight: bold; color: red">3891545.15</td>
+			</tr>
+			<tr>
+				<td>6</td>
+				<td>15</td>
+				<td>Active</td>
+				<td style="font-weight: bold; color: red">3770385.01</td>
+			</tr>
+			<tr>
+				<td>24</td>
+				<td>50</td>
+				<td>Cancelled</td>
+				<td style="font-weight: bold; color: red">3731048.06</td>
+			</tr>
+			<tr>
+				<td>10</td>
+				<td>24</td>
+				<td>Active</td>
+				<td style="font-weight: bold; color: red">3730011.15</td>
+			</tr>
+			<tr>
+				<td>26</td>
+				<td>52</td>
+				<td>Active</td>
+				<td style="font-weight: bold; color: red">3671925.57</td>
+			</tr>
+			<tr>
+				<td>18</td>
+				<td>34</td>
+				<td>Active</td>
+				<td style="font-weight: bold; color: red">3444838.50</td>
+			</tr>
+			<tr>
+				<td>36</td>
+				<td>70</td>
+				<td>Active</td>
+				<td style="font-weight: bold; color: red">3284852.27</td>
+			</tr>
+			<tr>
+				<td>7</td>
+				<td>18</td>
+				<td>Completed</td>
+				<td style="font-weight: bold; color: red">3236246.13</td>
+			</tr>
+			<tr>
+				<td>19</td>
+				<td>37</td>
+				<td>Completed</td>
+				<td style="font-weight: bold; color: red">3141509.86</td>
+			</tr>
+			<tr>
+				<td>45</td>
+				<td>83</td>
+				<td>Active</td>
+				<td style="font-weight: bold; color: red">3096623.02</td>
+			</tr>
+			<tr>
+				<td>35</td>
+				<td>67</td>
+				<td>Cancelled</td>
+				<td style="font-weight: bold; color: red">3090346.04</td>
+			</tr>
+		</table>
+		<h2>Договори з тривалістю більше 24 місяців</h2>
+		<table>
+			<tr>
+				<th>N</th>
+				<th>ID договору</th>
+				<th>Статус</th>
+				<th>Тривалість (міс)</th>
+				<th>Дата укладення</th>
+			</tr>
+			<tr class="highlight">
+				<td>5</td>
+				<td>14</td>
+				<td>Active</td>
+				<td style="font-weight: bold">60</td>
+				<td>2022-01-04</td>
+			</tr>
+			<tr class="highlight">
+				<td>13</td>
+				<td>27</td>
+				<td>Cancelled</td>
+				<td style="font-weight: bold">60</td>
+				<td>2024-08-29</td>
+			</tr>
+			<tr class="highlight">
+				<td>35</td>
+				<td>67</td>
+				<td>Cancelled</td>
+				<td style="font-weight: bold">60</td>
+				<td>2022-11-15</td>
+			</tr>
+			<tr class="highlight">
+				<td>43</td>
+				<td>78</td>
+				<td>Active</td>
+				<td style="font-weight: bold">60</td>
+				<td>2024-02-03</td>
+			</tr>
+			<tr class="highlight">
+				<td>3</td>
+				<td>11</td>
+				<td>Active</td>
+				<td style="font-weight: bold">48</td>
+				<td>2023-08-19</td>
+			</tr>
+			<tr class="highlight">
+				<td>6</td>
+				<td>15</td>
+				<td>Active</td>
+				<td style="font-weight: bold">48</td>
+				<td>2024-10-15</td>
+			</tr>
+			<tr class="highlight">
+				<td>7</td>
+				<td>18</td>
+				<td>Completed</td>
+				<td style="font-weight: bold">48</td>
+				<td>2022-05-23</td>
+			</tr>
+			<tr class="highlight">
+				<td>20</td>
+				<td>40</td>
+				<td>Completed</td>
+				<td style="font-weight: bold">48</td>
+				<td>2022-05-23</td>
+			</tr>
+			<tr class="highlight">
+				<td>36</td>
+				<td>70</td>
+				<td>Active</td>
+				<td style="font-weight: bold">48</td>
+				<td>2022-06-18</td>
+			</tr>
+			<tr class="highlight">
+				<td>38</td>
+				<td>72</td>
+				<td>Cancelled</td>
+				<td style="font-weight: bold">48</td>
+				<td>2022-01-19</td>
+			</tr>
+			<tr class="highlight">
+				<td>39</td>
+				<td>73</td>
+				<td>Cancelled</td>
+				<td style="font-weight: bold">48</td>
+				<td>2024-03-06</td>
+			</tr>
+			<tr class="highlight">
+				<td>42</td>
+				<td>76</td>
+				<td>Active</td>
+				<td style="font-weight: bold">48</td>
+				<td>2023-12-15</td>
+			</tr>
+			<tr class="highlight">
+				<td>2</td>
+				<td>10</td>
+				<td>Active</td>
+				<td style="font-weight: bold">36</td>
+				<td>2023-10-16</td>
+			</tr>
+			<tr class="highlight">
+				<td>8</td>
+				<td>20</td>
+				<td>Active</td>
+				<td style="font-weight: bold">36</td>
+				<td>2024-03-14</td>
+			</tr>
+			<tr class="highlight">
+				<td>10</td>
+				<td>24</td>
+				<td>Active</td>
+				<td style="font-weight: bold">36</td>
+				<td>2023-10-16</td>
+			</tr>
+			<tr class="highlight">
+				<td>12</td>
+				<td>26</td>
+				<td>Active</td>
+				<td style="font-weight: bold">36</td>
+				<td>2024-12-24</td>
+			</tr>
+			<tr class="highlight">
+				<td>15</td>
+				<td>31</td>
+				<td>Completed</td>
+				<td style="font-weight: bold">36</td>
+				<td>2024-07-06</td>
+			</tr>
+			<tr class="highlight">
+				<td>17</td>
+				<td>33</td>
+				<td>Active</td>
+				<td style="font-weight: bold">36</td>
+				<td>2022-01-02</td>
+			</tr>
+			<tr class="highlight">
+				<td>21</td>
+				<td>42</td>
+				<td>Active</td>
+				<td style="font-weight: bold">36</td>
+				<td>2024-08-09</td>
+			</tr>
+			<tr class="highlight">
+				<td>32</td>
+				<td>60</td>
+				<td>Active</td>
+				<td style="font-weight: bold">36</td>
+				<td>2023-06-08</td>
+			</tr>
+			<tr class="highlight">
+				<td>50</td>
+				<td>38</td>
+				<td>Suspended</td>
+				<td style="font-weight: bold">36</td>
+				<td>2024-07-25</td>
+			</tr>
+		</table>
+		<h2>Поліси за типом страхування</h2>
+		<table>
+			<tr>
+				<th>N</th>
+				<th>ID полісу</th>
+				<th>Тип об'єкта</th>
+				<th>Опис майна</th>
+				<th>Вартість майна</th>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>317</td>
+				<td>
+					<b>Здоров'я</b>
+				</td>
+				<td>Nissan Qashqai, 2020 року випуску</td>
+				<td>5638672.28</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>718</td>
+				<td>
+					<b>Здоров'я</b>
+				</td>
+				<td>Склад з видом на річку</td>
+				<td>7803610.16</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>322</td>
+				<td>
+					<b>Здоров'я</b>
+				</td>
+				<td>Магазин поруч з парком</td>
+				<td>7306139.90</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>113</td>
+				<td>
+					<b>Здоров'я</b>
+				</td>
+				<td>Земельна ділянка в спальному районі</td>
+				<td>1822336.77</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>183</td>
+				<td>
+					<b>Здоров'я</b>
+				</td>
+				<td>BMW Focus, 2014 року випуску</td>
+				<td>730442.73</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>404</td>
+				<td>
+					<b>Здоров'я</b>
+				</td>
+				<td>Офіс в елітному комплексі</td>
+				<td>451972.91</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>606</td>
+				<td>
+					<b>Здоров'я</b>
+				</td>
+				<td>Гараж в спальному районі</td>
+				<td>1537033.66</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>75</td>
+				<td>
+					<b>Здоров'я</b>
+				</td>
+				<td>Ford Sonata, 2019 року випуску</td>
+				<td>1290823.27</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>285</td>
+				<td>
+					<b>Здоров'я</b>
+				</td>
+				<td>Гараж в спальному районі</td>
+				<td>3562314.19</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>337</td>
+				<td>
+					<b>Здоров'я</b>
+				</td>
+				<td>Honda E-Class, 2018 року випуску</td>
+				<td>6402410.20</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>337</td>
+				<td>
+					<b>Здоров'я</b>
+				</td>
+				<td>Honda E-Class, 2018 року випуску</td>
+				<td>6402410.20</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>337</td>
+				<td>
+					<b>Здоров'я</b>
+				</td>
+				<td>Honda E-Class, 2018 року випуску</td>
+				<td>6402410.20</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>335</td>
+				<td>
+					<b>Здоров'я</b>
+				</td>
+				<td>Будинок в елітному комплексі</td>
+				<td>6308516.72</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>337</td>
+				<td>
+					<b>Здоров'я</b>
+				</td>
+				<td>Honda E-Class, 2018 року випуску</td>
+				<td>6402410.20</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>104</td>
+				<td>
+					<b>Здоров'я</b>
+				</td>
+				<td>Земельна ділянка у центрі міста</td>
+				<td>4045649.33</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>337</td>
+				<td>
+					<b>Здоров'я</b>
+				</td>
+				<td>Honda E-Class, 2018 року випуску</td>
+				<td>6402410.20</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>518</td>
+				<td>
+					<b>Здоров'я</b>
+				</td>
+				<td>Офіс в екологічній зоні</td>
+				<td>922974.29</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>922</td>
+				<td>
+					<b>Здоров'я</b>
+				</td>
+				<td>Toyota Octavia, 2024 року випуску</td>
+				<td>4986901.25</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>652</td>
+				<td>
+					<b>Здоров'я</b>
+				</td>
+				<td>Toyota A6, 2010 року випуску</td>
+				<td>1948604.53</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>223</td>
+				<td>
+					<b>Здоров'я</b>
+				</td>
+				<td>Hyundai A6, 2023 року випуску</td>
+				<td>8339713.62</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>765</td>
+				<td>
+					<b>Здоров'я</b>
+				</td>
+				<td>Mercedes-Benz Camry, 2017 року випуску</td>
+				<td>4250200.24</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>63</td>
+				<td>
+					<b>Здоров'я</b>
+				</td>
+				<td>BMW Camry, 2018 року випуску</td>
+				<td>7278531.88</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>536</td>
+				<td>
+					<b>Здоров'я</b>
+				</td>
+				<td>Skoda A6, 2019 року випуску</td>
+				<td>9256861.96</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>183</td>
+				<td>
+					<b>Здоров'я</b>
+				</td>
+				<td>BMW Focus, 2014 року випуску</td>
+				<td>730442.73</td>
+			</tr>
+			<tr>
+				<td>3</td>
+				<td>743</td>
+				<td>
+					<b>Здоров'я</b>
+				</td>
+				<td>Машиномісце поруч з парком</td>
+				<td>5521986.09</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>603</td>
+				<td>
+					<b>Здоров'я</b>
+				</td>
+				<td>Будинок в екологічній зоні</td>
+				<td>655255.84</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>823</td>
+				<td>
+					<b>Здоров'я</b>
+				</td>
+				<td>Toyota Octavia, 2024 року випуску</td>
+				<td>4986901.25</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>634</td>
+				<td>
+					<b>Здоров'я</b>
+				</td>
+				<td>Honda A6, 2017 року випуску</td>
+				<td>7320814.43</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>519</td>
+				<td>
+					<b>Здоров'я</b>
+				</td>
+				<td>Офіс в передмісті</td>
+				<td>9969055.76</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>506</td>
+				<td>
+					<b>Здоров'я</b>
+				</td>
+				<td>Земельна ділянка в передмісті</td>
+				<td>2749190.01</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>688</td>
+				<td>
+					<b>Здоров'я</b>
+				</td>
+				<td>Mercedes-Benz Octavia, 2012 року випуску</td>
+				<td>4133839.75</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>264</td>
+				<td>
+					<b>Інше</b>
+				</td>
+				<td>Гараж з видом на річку</td>
+				<td>8245469.48</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>61</td>
+				<td>
+					<b>Інше</b>
+				</td>
+				<td>Квартира з видом на річку</td>
+				<td>5510486.21</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>134</td>
+				<td>
+					<b>Інше</b>
+				</td>
+				<td>Toyota Octavia, 2010 року випуску</td>
+				<td>7671038.17</td>
+			</tr>
+			<tr>
+				<td>3</td>
+				<td>706</td>
+				<td>
+					<b>Інше</b>
+				</td>
+				<td>Квартира у центрі міста</td>
+				<td>3739404.77</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>252</td>
+				<td>
+					<b>Інше</b>
+				</td>
+				<td>Офіс в спальному районі</td>
+				<td>617415.62</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>929</td>
+				<td>
+					<b>Інше</b>
+				</td>
+				<td>Renault E-Class, 2024 року випуску</td>
+				<td>8189065.29</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>221</td>
+				<td>
+					<b>Інше</b>
+				</td>
+				<td>Mercedes-Benz A6, 2011 року випуску</td>
+				<td>1519571.06</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>438</td>
+				<td>
+					<b>Інше</b>
+				</td>
+				<td>Магазин в елітному комплексі</td>
+				<td>3317308.61</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>68</td>
+				<td>
+					<b>Інше</b>
+				</td>
+				<td>Машиномісце в передмісті</td>
+				<td>2579447.49</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>221</td>
+				<td>
+					<b>Інше</b>
+				</td>
+				<td>Mercedes-Benz A6, 2011 року випуску</td>
+				<td>1519571.06</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>438</td>
+				<td>
+					<b>Інше</b>
+				</td>
+				<td>Магазин в елітному комплексі</td>
+				<td>3317308.61</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>721</td>
+				<td>
+					<b>Інше</b>
+				</td>
+				<td>Audi Camry, 2022 року випуску</td>
+				<td>2645577.84</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>582</td>
+				<td>
+					<b>Інше</b>
+				</td>
+				<td>Volkswagen X5, 2011 року випуску</td>
+				<td>1120415.56</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>901</td>
+				<td>
+					<b>Життя</b>
+				</td>
+				<td>Toyota A6, 2011 року випуску</td>
+				<td>959367.89</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>943</td>
+				<td>
+					<b>Життя</b>
+				</td>
+				<td>Volkswagen X5, 2011 року випуску</td>
+				<td>1120415.56</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>349</td>
+				<td>
+					<b>Життя</b>
+				</td>
+				<td>Офіс з видом на річку</td>
+				<td>7246887.97</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>418</td>
+				<td>
+					<b>Життя</b>
+				</td>
+				<td>Mercedes-Benz Focus, 2016 року випуску</td>
+				<td>4089262.26</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>541</td>
+				<td>
+					<b>Життя</b>
+				</td>
+				<td>Honda Focus, 2019 року випуску</td>
+				<td>7815645.53</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>259</td>
+				<td>
+					<b>Життя</b>
+				</td>
+				<td>Гараж в елітному комплексі</td>
+				<td>623865.79</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>430</td>
+				<td>
+					<b>Життя</b>
+				</td>
+				<td>Renault Camry, 2013 року випуску</td>
+				<td>328801.11</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>617</td>
+				<td>
+					<b>Життя</b>
+				</td>
+				<td>Будинок в екологічній зоні</td>
+				<td>7646523.73</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>22</td>
+				<td>
+					<b>Життя</b>
+				</td>
+				<td>Квартира з видом на річку</td>
+				<td>6698642.87</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>72</td>
+				<td>
+					<b>Життя</b>
+				</td>
+				<td>Skoda A6, 2016 року випуску</td>
+				<td>7716671.08</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>930</td>
+				<td>
+					<b>Життя</b>
+				</td>
+				<td>Гараж поруч з парком</td>
+				<td>1616453.71</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>485</td>
+				<td>
+					<b>Інше</b>
+				</td>
+				<td>Квартира поруч з парком</td>
+				<td>6544050.98</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>843</td>
+				<td>
+					<b>Інше</b>
+				</td>
+				<td>Skoda A6, 2016 року випуску</td>
+				<td>7716671.08</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>788</td>
+				<td>
+					<b>Інше</b>
+				</td>
+				<td>Квартира поруч з парком</td>
+				<td>6492406.64</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>893</td>
+				<td>
+					<b>Інше</b>
+				</td>
+				<td>Склад в спальному районі</td>
+				<td>3183022.62</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>663</td>
+				<td>
+					<b>Інше</b>
+				</td>
+				<td>Audi Octavia, 2018 року випуску</td>
+				<td>4006309.16</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>755</td>
+				<td>
+					<b>Інше</b>
+				</td>
+				<td>Склад в екологічній зоні</td>
+				<td>7404158.95</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>60</td>
+				<td>
+					<b>Транспорт</b>
+				</td>
+				<td>Audi Golf, 2015 року випуску</td>
+				<td>3185557.65</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>813</td>
+				<td>
+					<b>Транспорт</b>
+				</td>
+				<td>Магазин в передмісті</td>
+				<td>8050966.53</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>630</td>
+				<td>
+					<b>Транспорт</b>
+				</td>
+				<td>Audi Logan, 2020 року випуску</td>
+				<td>3847446.12</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>117</td>
+				<td>
+					<b>Транспорт</b>
+				</td>
+				<td>Honda X5, 2016 року випуску</td>
+				<td>3134298.97</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>889</td>
+				<td>
+					<b>Транспорт</b>
+				</td>
+				<td>Hyundai Octavia, 2016 року випуску</td>
+				<td>3928697.89</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>572</td>
+				<td>
+					<b>Транспорт</b>
+				</td>
+				<td>Квартира у центрі міста</td>
+				<td>7198129.60</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>858</td>
+				<td>
+					<b>Транспорт</b>
+				</td>
+				<td>Склад в спальному районі</td>
+				<td>9517633.28</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>829</td>
+				<td>
+					<b>Транспорт</b>
+				</td>
+				<td>Магазин в спальному районі</td>
+				<td>636096.70</td>
+			</tr>
+			<tr>
+				<td>4</td>
+				<td>837</td>
+				<td>
+					<b>Транспорт</b>
+				</td>
+				<td>Mercedes-Benz Camry, 2017 року випуску</td>
+				<td>4250200.24</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>908</td>
+				<td>
+					<b>Транспорт</b>
+				</td>
+				<td>Гараж в елітному комплексі</td>
+				<td>2312860.67</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>301</td>
+				<td>
+					<b>Транспорт</b>
+				</td>
+				<td>Гараж у центрі міста</td>
+				<td>3351441.77</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>490</td>
+				<td>
+					<b>Транспорт</b>
+				</td>
+				<td>Машиномісце в елітному комплексі</td>
+				<td>7638012.68</td>
+			</tr>
+		</table>
+		<h2>Список застрахованих осіб</h2>
+		<p>
+			<b>Договір 49:</b>
+			ID 4, статус: Suspended
+		</p>
+		<ul>
+			<li>Анна Павленко , тел: +380994068244 (Здоров'я)</li>
+		</ul>
+		<p>
+			<b>Договір 1:</b>
+			ID 5, статус: Cancelled
+		</p>
+		<ul>
+			<li>Іван Кравченко , тел: +380999289334 (Здоров'я)</li>
+		</ul>
+		<p>
+			<b>Договір 2:</b>
+			ID 10, статус: Active
+		</p>
+		<ul>
+			<li>Сергій Павленко , тел: +380996546783 (Інше)</li>
+		</ul>
+		<p>
+			<b>Договір 3:</b>
+			ID 11, статус: Active
+		</p>
+		<ul>
+			<li>Денис Левченко , тел: +380991116190 (Здоров'я)</li>
+			<li>Сергій Франко , тел: +380996394129 (Інше)</li>
+		</ul>
+		<p>
+			<b>Договір 4:</b>
+			ID 12, статус: Active
+		</p>
+		<ul>
+			<li>Михайло Бондаренко , тел: +380994158931 (Інше)</li>
+			<li>Максим Коваленко , тел: +380996347422 (Інше)</li>
+		</ul>
+		<p>
+			<b>Договір 5:</b>
+			ID 14, статус: Active
+		</p>
+		<ul>
+			<li>Марія Іваненко , тел: +380996045010 (Інше)</li>
+			<li>Максим Дмитренко , тел: +380997428314 (Інше)</li>
+		</ul>
+		<p>
+			<b>Договір 6:</b>
+			ID 15, статус: Active
+		</p>
+		<ul>
+			<li>Катерина Дмитренко , тел: +380994369020 (Інше)</li>
+			<li>Ніна Сидоренко , тел: +380993072689 (Інше)</li>
+			<li>Ніна Дмитренко , тел: +380998921111 (Здоров'я)</li>
+		</ul>
+		<p>
+			<b>Договір 7:</b>
+			ID 18, статус: Completed
+		</p>
+		<ul>
+			<li>Ірина Данченко , тел: +380996619575 (Інше)</li>
+			<li>Михайло Коваленко , тел: +380993482858 (Інше)</li>
+		</ul>
+		<p>
+			<b>Договір 8:</b>
+			ID 20, статус: Active
+		</p>
+		<ul>
+			<li>Василь Олійник , тел: +380999789933 (Інше)</li>
+			<li>Олександр Коваленко , тел: +380998406434 (Інше)</li>
+			<li>Михайло Савченко , тел: +380997272528 (Транспорт)</li>
+		</ul>
+		<p>
+			<b>Договір 9:</b>
+			ID 21, статус: Active
+		</p>
+		<ul>
+			<li>Віктор Мельник , тел: +380997770336 (Інше)</li>
+			<li>Віктор Данченко , тел: +380994276814 (Здоров'я)</li>
+		</ul>
+		<p>
+			<b>Договір 10:</b>
+			ID 24, статус: Active
+		</p>
+		<ul>
+			<li>Іван Іваненко , тел: +380993358094 (Транспорт)</li>
+		</ul>
+		<p>
+			<b>Договір 11:</b>
+			ID 25, статус: Active
+		</p>
+		<ul>
+			<li>Оксана Павленко , тел: +380999079837 (Інше)</li>
+		</ul>
+		<p>
+			<b>Договір 12:</b>
+			ID 26, статус: Active
+		</p>
+		<ul>
+			<li>Сергій Сидоренко , тел: +380998751380 (Інше)</li>
+		</ul>
+		<p>
+			<b>Договір 13:</b>
+			ID 27, статус: Cancelled
+		</p>
+		<ul>
+			<li>Людмила Бондаренко , тел: +380991399600 (Здоров'я)</li>
+		</ul>
+		<p>
+			<b>Договір 14:</b>
+			ID 29, статус: Active
+		</p>
+		<ul>
+			<li>Наталія Павленко , тел: +380995164764 (Інше)</li>
+		</ul>
+		<p>
+			<b>Договір 15:</b>
+			ID 31, статус: Completed
+		</p>
+		<ul>
+			<li>Сергій Шевченко , тел: +380998098002 (Інше)</li>
+			<li>Михайло Петренко , тел: +380999843502 (Здоров'я)</li>
+		</ul>
+		<p>
+			<b>Договір 16:</b>
+			ID 32, статус: Active
+		</p>
+		<ul>
+			<li>Марія Савченко , тел: +380995152882 (Інше)</li>
+			<li>Наталія Романенко , тел: +380994757204 (Транспорт)</li>
+		</ul>
+		<p>
+			<b>Договір 17:</b>
+			ID 33, статус: Active
+		</p>
+		<ul>
+			<li>Віра Мельник , тел: +380997341143 (Здоров'я)</li>
+			<li>Микола Романенко , тел: +380992696562 (Інше)</li>
+		</ul>
+		<p>
+			<b>Договір 18:</b>
+			ID 34, статус: Active
+		</p>
+		<ul>
+			<li>Віра Ткаченко , тел: +380993646318 (Інше)</li>
+		</ul>
+		<p>
+			<b>Договір 19:</b>
+			ID 37, статус: Completed
+		</p>
+		<ul>
+			<li>Катерина Мельник , тел: +380991741721 (Інше)</li>
+		</ul>
+		<p>
+			<b>Договір 50:</b>
+			ID 38, статус: Suspended
+		</p>
+		<ul>
+			<li>Катерина Павленко , тел: +380996860302 (Здоров'я)</li>
+		</ul>
+		<p>
+			<b>Договір 20:</b>
+			ID 40, статус: Completed
+		</p>
+		<ul>
+			<li>Микола Романенко , тел: +380992696562 (Інше)</li>
+		</ul>
+		<p>
+			<b>Договір 21:</b>
+			ID 42, статус: Active
+		</p>
+		<ul>
+			<li>Анна Олійник , тел: +380993996235 (Інше)</li>
+		</ul>
+		<p>
+			<b>Договір 22:</b>
+			ID 45, статус: Active
+		</p>
+		<ul>
+			<li>Андрій Сидоренко , тел: +380996271484 (Інше)</li>
+			<li>Анна Романенко , тел: +380991659636 (Інше)</li>
+		</ul>
+		<p>
+			<b>Договір 23:</b>
+			ID 49, статус: Active
+		</p>
+		<ul>
+			<li>Василь Іваненко , тел: +380992529474 (Здоров'я)</li>
+			<li>Михайло Бондаренко , тел: +380994158931 (Інше)</li>
+		</ul>
+		<p>
+			<b>Договір 24:</b>
+			ID 50, статус: Cancelled
+		</p>
+		<ul>
+			<li>Василь Іваненко , тел: +380992529474 (Здоров'я)</li>
+			<li>Олена Павленко , тел: +380993973382 (Інше)</li>
+		</ul>
+		<p>
+			<b>Договір 25:</b>
+			ID 51, статус: Active
+		</p>
+		<ul>
+			<li>Василь Іваненко , тел: +380992529474 (Здоров'я)</li>
+			<li>Віктор Олійник , тел: +380998696706 (Здоров'я)</li>
+		</ul>
+		<p>
+			<b>Договір 26:</b>
+			ID 52, статус: Active
+		</p>
+		<ul>
+			<li>Олександр Василенко , тел: +380999325163 (Інше)</li>
+		</ul>
+		<p>
+			<b>Договір 27:</b>
+			ID 53, статус: Active
+		</p>
+		<ul>
+			<li>Василь Іваненко , тел: +380992529474 (Здоров'я)</li>
+			<li>Сергій Іваненко , тел: +380994915179 (Здоров'я)</li>
+		</ul>
+		<p>
+			<b>Договір 28:</b>
+			ID 54, статус: Active
+		</p>
+		<ul>
+			<li>Василь Іваненко , тел: +380992529474 (Здоров'я)</li>
+		</ul>
+		<p>
+			<b>Договір 29:</b>
+			ID 57, статус: Active
+		</p>
+		<ul>
+			<li>Петро Коваленко , тел: +380992442037 (Інше)</li>
+		</ul>
+		<p>
+			<b>Договір 30:</b>
+			ID 58, статус: Active
+		</p>
+		<ul>
+			<li>Андрій Коваленко , тел: +380996286329 (Транспорт)</li>
+		</ul>
+		<p>
+			<b>Договір 31:</b>
+			ID 59, статус: Active
+		</p>
+		<ul>
+			<li>Катерина Олійник , тел: +380996066934 (Транспорт)</li>
+		</ul>
+		<p>
+			<b>Договір 32:</b>
+			ID 60, статус: Active
+		</p>
+		<ul>
+			<li>Анна Мельник , тел: +380992094904 (Інше)</li>
+			<li>Михайло Іваненко , тел: +380994461941 (Інше)</li>
+		</ul>
+		<p>
+			<b>Договір 33:</b>
+			ID 63, статус: Active
+		</p>
+		<ul>
+			<li>Максим Ткаченко , тел: +380995946898 (Інше)</li>
+		</ul>
+		<p>
+			<b>Договір 34:</b>
+			ID 64, статус: Active
+		</p>
+		<ul>
+			<li>Денис Данченко , тел: +380999233978 (Транспорт)</li>
+		</ul>
+		<p>
+			<b>Договір 35:</b>
+			ID 67, статус: Cancelled
+		</p>
+		<ul>
+			<li>Марія Коваленко , тел: +380997101120 (Інше)</li>
+		</ul>
+		<p>
+			<b>Договір 36:</b>
+			ID 70, статус: Active
+		</p>
+		<ul>
+			<li>Ніна Сидоренко , тел: +380999115789 (Інше)</li>
+			<li>Андрій Гончаренко , тел: +380991267279 (Інше)</li>
+		</ul>
+		<p>
+			<b>Договір 37:</b>
+			ID 71, статус: Active
+		</p>
+		<ul>
+			<li>Максим Марченко , тел: +380995976929 (Інше)</li>
+			<li>Ніна Сидоренко , тел: +380994175889 (Здоров'я)</li>
+		</ul>
+		<p>
+			<b>Договір 38:</b>
+			ID 72, статус: Cancelled
+		</p>
+		<ul>
+			<li>Олександр Ткаченко , тел: +380999268260 (Здоров'я)</li>
+		</ul>
+		<p>
+			<b>Договір 39:</b>
+			ID 73, статус: Cancelled
+		</p>
+		<ul>
+			<li>Максим Бондаренко , тел: +380991240818 (Здоров'я)</li>
+			<li>Іван Шевченко , тел: +380991689231 (Транспорт)</li>
+		</ul>
+		<p>
+			<b>Договір 40:</b>
+			ID 74, статус: Active
+		</p>
+		<ul>
+			<li>Людмила Василенко , тел: +380996760664 (Здоров'я)</li>
+			<li>Людмила Бондаренко , тел: +380991399600 (Здоров'я)</li>
+		</ul>
+		<p>
+			<b>Договір 41:</b>
+			ID 75, статус: Active
+		</p>
+		<ul>
+			<li>Марія Бондаренко , тел: +380996269995 (Транспорт)</li>
+		</ul>
+		<p>
+			<b>Договір 42:</b>
+			ID 76, статус: Active
+		</p>
+		<ul>
+			<li>Віра Романенко , тел: +380993114454 (Інше)</li>
+			<li>Ніна Бондаренко , тел: +380991990911 (Транспорт)</li>
+		</ul>
+		<p>
+			<b>Договір 48:</b>
+			ID 77, статус: Suspended
+		</p>
+		<ul>
+			<li>Анна Гончаренко , тел: +380999422326 (Транспорт)</li>
+		</ul>
+		<p>
+			<b>Договір 43:</b>
+			ID 78, статус: Active
+		</p>
+		<ul>
+			<li>Марія Марченко , тел: +380993124585 (Інше)</li>
+			<li>Юрій Гончаренко , тел: +380999562146 (Здоров'я)</li>
+		</ul>
+		<p>
+			<b>Договір 44:</b>
+			ID 79, статус: Completed
+		</p>
+		<ul>
+			<li>Денис Мельник , тел: +380993313766 (Транспорт)</li>
+			<li>Денис Сидоренко , тел: +380999665455 (Інше)</li>
+		</ul>
+		<p>
+			<b>Договір 45:</b>
+			ID 83, статус: Active
+		</p>
+		<ul>
+			<li>Оксана Левченко , тел: +380995595112 (Інше)</li>
+		</ul>
+		<p>
+			<b>Договір 46:</b>
+			ID 84, статус: Active
+		</p>
+		<ul>
+			<li>Віктор Іваненко , тел: +380997321120 (Інше)</li>
+			<li>Віра Кравченко , тел: +380995901152 (Транспорт)</li>
+		</ul>
+		<p>
+			<b>Договір 47:</b>
+			ID 85, статус: Completed
+		</p>
+		<ul>
+			<li>Катерина Коваленко , тел: +380999646619 (Інше)</li>
+		</ul>
+		<hr />
+		<p style="color: gray; font-size: 12px">
+			Система: Insurance System v1.0<br />
+			Дата: 2025-10-20T17:52:58.325835+03:00
+		</p>
+	</body>
+</html>

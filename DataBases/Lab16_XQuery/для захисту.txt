@@ -1,0 +1,36 @@
+1) Вивести ім'я та контактну інформацію про страхувальника, який застрахував будинок на суму 2 млн. грн.
+for $insured in //insured
+where $insured//property/prop/value >= 2000000 and $insured//property/prop/value <= 2000000
+return 
+  <client>
+    <name>{data($insured/person/pers/first_name)} {data($insured/person/pers/last_name)}</name>
+    <phone>{data($insured/phone_number)}</phone>
+    <email>{data($insured/email)}</email>
+    <address>{data($insured/address)}</address>
+    <property_value>{data($insured//property/prop/value)}</property_value>
+  </client>
+2) Вивести кількість укладених компанією договорів страхування та на яку сукупно суму застраховано вказані в них об'єкти за минулий квартал.
+let $quarter_start := '2024-07-01'
+let $quarter_end := '2024-09-30'
+let $contracts := //agreement[conclusion_date >= $quarter_start and conclusion_date <= $quarter_end]
+let $count := count($contracts)
+let $total := sum($contracts/total_insurance_amount)
+return 
+  <quarterly_report>
+    <period>
+      <start>{$quarter_start}</start>
+      <end>{$quarter_end}</end>
+    </period>
+    <contracts_count>{$count}</contracts_count>
+    <total_amount>{$total}</total_amount>
+    <average_amount>{if ($count > 0) then $total div $count else 0}</average_amount>
+    <contracts>
+      {for $contract in $contracts
+       return 
+         <contract>
+           <id>{data($contract/@id)}</id>
+           <date>{data($contract/conclusion_date)}</date>
+           <amount>{data($contract/total_insurance_amount)}</amount>
+         </contract>}
+    </contracts>
+  </quarterly_report>

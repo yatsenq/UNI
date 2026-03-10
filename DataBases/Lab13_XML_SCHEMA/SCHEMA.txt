@@ -1,219 +1,202 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-
-    <!-- Прості елементи -->
-    <xsd:element name="conclusion_date" type="xsd:date"/>
-    <xsd:element name="total_insurance_amount" type="xsd:decimal"/>
-    <xsd:element name="duration_months" type="xsd:positiveInteger"/>
-    <xsd:element name="start_date" type="xsd:date"/>
-    <xsd:element name="end_date" type="xsd:date"/>
-    <xsd:element name="insurance_amount" type="xsd:decimal"/>
-    <xsd:element name="first_name" type="xsd:string"/>
-    <xsd:element name="last_name" type="xsd:string"/>
-    <xsd:element name="address" type="xsd:string"/>
-    <xsd:element name="birth_date" type="xsd:date"/>
-    <xsd:element name="insured_ref" type="xsd:positiveInteger"/>
-    <xsd:element name="property_ref" type="xsd:positiveInteger"/>
-    <xsd:element name="description" type="xsd:string"/>
-    <xsd:element name="value" type="xsd:decimal"/>
-    <xsd:element name="year_of_issue" type="xsd:gYear"/>
-    <xsd:element name="location" type="xsd:string"/>
-
-    <!-- Елемент phone_number з обмеженням на формат -->
-    <xsd:element name="phone_number">
-        <xsd:simpleType>
-            <xsd:restriction base="xsd:string">
-                <xsd:pattern value="\+?[0-9]{10,15}"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-    </xsd:element>
-
-    <!-- Елемент email з обмеженням на формат -->
-    <xsd:element name="email">
-        <xsd:simpleType>
-            <xsd:restriction base="xsd:string">
-                <xsd:pattern value="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-    </xsd:element>
-
-    <!-- Елемент gender з обмеженням на значення -->
-    <xsd:element name="gender">
-        <xsd:simpleType>
-            <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="M"/>
-                <xsd:enumeration value="F"/>
-                <xsd:enumeration value="Male"/>
-                <xsd:enumeration value="Female"/>
-            </xsd:restriction>
-        </xsd:simpleType>
-    </xsd:element>
-
-    <!-- Кореневий елемент insurance_database -->
-    <xsd:element name="insurance_database">
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element ref="agreements"/>
-            </xsd:sequence>
-            <xsd:attribute name="export_date" type="xsd:dateTime" use="required"/>
-            <xsd:attribute name="system" type="xsd:string" use="required"/>
-        </xsd:complexType>
-    </xsd:element>
-
-    <!-- Елемент agreements -->
-    <xsd:element name="agreements">
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element ref="agreement" minOccurs="0" maxOccurs="unbounded"/>
-            </xsd:sequence>
-        </xsd:complexType>
-    </xsd:element>
-
-    <!-- Елемент agreement -->
-    <xsd:element name="agreement">
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element ref="conclusion_date"/>
-                <xsd:element ref="total_insurance_amount"/>
-                <xsd:element ref="duration_months"/>
-                <xsd:element ref="insurance_policies"/>
-            </xsd:sequence>
-            <xsd:attribute name="id" type="xsd:positiveInteger" use="required"/>
-            <xsd:attribute name="status" use="required">
-    <xsd:simpleType>
-        <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="Active"/>
-            <xsd:enumeration value="Cancelled"/>
-            <xsd:enumeration value="Completed"/>
-            <xsd:enumeration value="Suspended"/>
-        </xsd:restriction>
-    </xsd:simpleType>
-</xsd:attribute>
-        </xsd:complexType>
-    </xsd:element>
-
-    <!-- Елемент insurance_policies -->
-    <xsd:element name="insurance_policies">
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element ref="policy" minOccurs="0" maxOccurs="unbounded"/>
-            </xsd:sequence>
-        </xsd:complexType>
-    </xsd:element>
-
-    <!-- Елемент policy -->
-    <xsd:element name="policy">
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element ref="start_date"/>
-                <xsd:element ref="end_date"/>
-                <xsd:element ref="insurance_amount"/>
-                <xsd:element ref="insured_persons"/>
-            </xsd:sequence>
-            <xsd:attribute name="id" type="xsd:positiveInteger" use="required"/>
-        </xsd:complexType>
-    </xsd:element>
-
-    <!-- Елемент insured_persons -->
-    <xsd:element name="insured_persons">
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element ref="insured" minOccurs="0" maxOccurs="unbounded"/>
-            </xsd:sequence>
-        </xsd:complexType>
-    </xsd:element>
-
-    <!-- Елемент insured -->
-    <xsd:element name="insured">
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element ref="address" minOccurs="0"/>
-                <xsd:element ref="phone_number" minOccurs="0"/>
-                <xsd:element ref="email" minOccurs="0"/>
-                <xsd:element ref="gender"/>
-                <xsd:element ref="birth_date"/>
-                <xsd:element ref="insurance_objects"/>
-                <xsd:element ref="person"/>
-            </xsd:sequence>
-            <xsd:attribute name="id" type="xsd:positiveInteger" use="required"/>
-            <xsd:attribute name="person_ref" type="xsd:positiveInteger" use="required"/>
-        </xsd:complexType>
-    </xsd:element>
-
-    <!-- Елемент insurance_objects -->
-    <xsd:element name="insurance_objects">
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element ref="insurance_object" minOccurs="0" maxOccurs="unbounded"/>
-            </xsd:sequence>
-        </xsd:complexType>
-    </xsd:element>
-
-    <!-- Елемент insurance_object -->
-    <xsd:element name="insurance_object">
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element ref="insured_ref"/>
-                <xsd:element ref="property_ref"/>
-                <xsd:element ref="property"/>
-            </xsd:sequence>
-            <xsd:attribute name="id" type="xsd:positiveInteger" use="required"/>
-            <xsd:attribute name="type" type="xsd:string" use="required"/>
-        </xsd:complexType>
-    </xsd:element>
-
-    <!-- Елемент property -->
-    <xsd:element name="property">
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element ref="prop"/>
-            </xsd:sequence>
-        </xsd:complexType>
-    </xsd:element>
-
-    <!-- Елемент prop -->
-    <xsd:element name="prop">
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element ref="description"/>
-                <xsd:element ref="value"/>
-                <xsd:element ref="year_of_issue" minOccurs="0"/>
-                <xsd:element ref="location" minOccurs="0"/>
-            </xsd:sequence>
-            <xsd:attribute name="id" type="xsd:positiveInteger" use="required"/>
-            <xsd:attribute name="currency" use="required">
-                <xsd:simpleType>
-                    <xsd:restriction base="xsd:string">
-                        <xsd:length value="3"/>
-                        <xsd:pattern value="[A-Z]{3}"/>
-                    </xsd:restriction>
-                </xsd:simpleType>
-            </xsd:attribute>
-        </xsd:complexType>
-    </xsd:element>
-
-    <!-- Елемент person -->
-    <xsd:element name="person">
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element ref="pers"/>
-            </xsd:sequence>
-        </xsd:complexType>
-    </xsd:element>
-
-    <!-- Елемент pers -->
-    <xsd:element name="pers">
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element ref="first_name"/>
-                <xsd:element ref="last_name"/>
-                <xsd:element ref="gender"/>
-                <xsd:element ref="birth_date"/>
-                <xsd:element ref="email" minOccurs="0"/>
-                <xsd:element ref="phone_number" minOccurs="0"/>
-            </xsd:sequence>
-            <xsd:attribute name="id" type="xsd:positiveInteger" use="required"/>
-        </xsd:complexType>
-    </xsd:element>
-
+<xsd:schema
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<!-- Прості елементи -->
+	<xsd:element name="conclusion_date" type="xsd:date"/>
+	<xsd:element name="total_insurance_amount" type="xsd:decimal"/>
+	<xsd:element name="duration_months" type="xsd:positiveInteger"/>
+	<xsd:element name="start_date" type="xsd:date"/>
+	<xsd:element name="end_date" type="xsd:date"/>
+	<xsd:element name="insurance_amount" type="xsd:decimal"/>
+	<xsd:element name="first_name" type="xsd:string"/>
+	<xsd:element name="last_name" type="xsd:string"/>
+	<xsd:element name="address" type="xsd:string"/>
+	<xsd:element name="birth_date" type="xsd:date"/>
+	<xsd:element name="insured_ref" type="xsd:positiveInteger"/>
+	<xsd:element name="property_ref" type="xsd:positiveInteger"/>
+	<xsd:element name="description" type="xsd:string"/>
+	<xsd:element name="value" type="xsd:decimal"/>
+	<xsd:element name="year_of_issue" type="xsd:gYear"/>
+	<xsd:element name="location" type="xsd:string"/>
+	<!-- Елемент phone_number з обмеженням на формат -->
+	<xsd:element name="phone_number">
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:string">
+				<xsd:pattern value="\+?[0-9]{10,15}"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<!-- Елемент email з обмеженням на формат -->
+	<xsd:element name="email">
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:string">
+				<xsd:pattern value="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<!-- Елемент gender з обмеженням на значення -->
+	<xsd:element name="gender">
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:string">
+				<xsd:enumeration value="M"/>
+				<xsd:enumeration value="F"/>
+				<xsd:enumeration value="Male"/>
+				<xsd:enumeration value="Female"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<!-- Кореневий елемент insurance_database -->
+	<xsd:element name="insurance_database">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="agreements"/>
+			</xsd:sequence>
+			<xsd:attribute name="export_date" type="xsd:dateTime" use="required"/>
+			<xsd:attribute name="system" type="xsd:string" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- Елемент agreements -->
+	<xsd:element name="agreements">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="agreement" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- Елемент agreement -->
+	<xsd:element name="agreement">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="conclusion_date"/>
+				<xsd:element ref="total_insurance_amount"/>
+				<xsd:element ref="duration_months"/>
+				<xsd:element ref="insurance_policies"/>
+			</xsd:sequence>
+			<xsd:attribute name="id" type="xsd:positiveInteger" use="required"/>
+			<xsd:attribute name="status" use="required">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="Active"/>
+						<xsd:enumeration value="Cancelled"/>
+						<xsd:enumeration value="Completed"/>
+						<xsd:enumeration value="Suspended"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- Елемент insurance_policies -->
+	<xsd:element name="insurance_policies">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="policy" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- Елемент policy -->
+	<xsd:element name="policy">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="start_date"/>
+				<xsd:element ref="end_date"/>
+				<xsd:element ref="insurance_amount"/>
+				<xsd:element ref="insured_persons"/>
+			</xsd:sequence>
+			<xsd:attribute name="id" type="xsd:positiveInteger" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- Елемент insured_persons -->
+	<xsd:element name="insured_persons">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="insured" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- Елемент insured -->
+	<xsd:element name="insured">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="address" minOccurs="0"/>
+				<xsd:element ref="phone_number" minOccurs="0"/>
+				<xsd:element ref="email" minOccurs="0"/>
+				<xsd:element ref="gender"/>
+				<xsd:element ref="birth_date"/>
+				<xsd:element ref="insurance_objects"/>
+				<xsd:element ref="person"/>
+			</xsd:sequence>
+			<xsd:attribute name="id" type="xsd:positiveInteger" use="required"/>
+			<xsd:attribute name="person_ref" type="xsd:positiveInteger" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- Елемент insurance_objects -->
+	<xsd:element name="insurance_objects">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="insurance_object" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- Елемент insurance_object -->
+	<xsd:element name="insurance_object">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="insured_ref"/>
+				<xsd:element ref="property_ref"/>
+				<xsd:element ref="property"/>
+			</xsd:sequence>
+			<xsd:attribute name="id" type="xsd:positiveInteger" use="required"/>
+			<xsd:attribute name="type" type="xsd:string" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- Елемент property -->
+	<xsd:element name="property">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="prop"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- Елемент prop -->
+	<xsd:element name="prop">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="description"/>
+				<xsd:element ref="value"/>
+				<xsd:element ref="year_of_issue" minOccurs="0"/>
+				<xsd:element ref="location" minOccurs="0"/>
+			</xsd:sequence>
+			<xsd:attribute name="id" type="xsd:positiveInteger" use="required"/>
+			<xsd:attribute name="currency" use="required">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:length value="3"/>
+						<xsd:pattern value="[A-Z]{3}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- Елемент person -->
+	<xsd:element name="person">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="pers"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- Елемент pers -->
+	<xsd:element name="pers">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="first_name"/>
+				<xsd:element ref="last_name"/>
+				<xsd:element ref="gender"/>
+				<xsd:element ref="birth_date"/>
+				<xsd:element ref="email" minOccurs="0"/>
+				<xsd:element ref="phone_number" minOccurs="0"/>
+			</xsd:sequence>
+			<xsd:attribute name="id" type="xsd:positiveInteger" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
 </xsd:schema>

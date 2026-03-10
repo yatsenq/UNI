@@ -160,7 +160,6 @@ class PrimParallel
     }
     static void PrimParallelMethod(int[] key, int numThreads)
     {
-        // Ініціалізація
         for (int i = 0; i < n; i++)
         {
             key[i] = INF;

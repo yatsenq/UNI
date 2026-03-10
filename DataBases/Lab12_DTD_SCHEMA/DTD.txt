@@ -21,7 +21,7 @@
 
 <!ELEMENT insured_persons (insured*)>
 
-<!ELEMENT insured (address?, phone_number?, email?, gender, birth_date, insurance_objects, person)>
+<!ELEMENT insured (address, phone_number, email?, gender, birth_date, insurance_objects, person)>
 <!ATTLIST insured id CDATA #REQUIRED person_ref CDATA #REQUIRED>
 <!ELEMENT address (#PCDATA)>
 <!ELEMENT phone_number (#PCDATA)>

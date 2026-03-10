@@ -1,0 +1,198 @@
+Запит 1: Всі активні договори
+for $agreement in //agreement[@status='Active']
+return 
+  <contract id="{$agreement/@id}">
+    {$agreement/conclusion_date}
+    {$agreement/total_insurance_amount}
+    {$agreement/duration_months}
+  </contract>
+
+Запит 2: Договори з сумою більше середньої
+let $avg := avg(//agreement/total_insurance_amount)
+for $agreement in //agreement[total_insurance_amount > $avg]
+order by $agreement/total_insurance_amount descending
+return 
+  <high_value_contract>
+    <id>{data($agreement/@id)}</id>
+    <amount>{data($agreement/total_insurance_amount)}</amount>
+    <status>{data($agreement/@status)}</status>
+    <average>{$avg}</average>
+  </high_value_contract>
+
+Запит 3: Підрахунок за статусами
+for $status in distinct-values(//agreement/@status)
+let $count := count(//agreement[@status=$status])
+where $count >= 1
+order by $count descending
+return 
+  <status_summary>
+    <status>{$status}</status>
+    <count>{$count}</count>
+  </status_summary>
+
+Запит 4: Особи з типом страхування
+for $insured in //insured
+let $type := $insured//insurance_object/@type
+return 
+  <person>
+    <name>{data($insured/person/pers/first_name)} {data($insured/person/pers/last_name)}</name>
+    <phone>{data($insured/phone_number)}</phone>
+    <insurance_type>
+      {if ($type = 'Vehicle') then 'Транспорт'
+       else if ($type = 'Health') then 'Здоров\'я'
+       else if ($type = 'Life') then 'Життя'
+       else if ($type = 'Property') then 'Майно'
+       else 'Не вказано'}
+    </insurance_type>
+  </person>
+
+Запит 5: Договори з кількома застрахованими особами
+for $agreement in //agreement
+let $insured_count := count($agreement//insured)
+where $insured_count > 1
+order by $insured_count descending
+return 
+  <multi_person_contract>
+    <agreement_id>{data($agreement/@id)}</agreement_id>
+    <status>{data($agreement/@status)}</status>
+    <insured_persons_count>{$insured_count}</insured_persons_count>
+    <total_amount>{data($agreement/total_insurance_amount)}</total_amount>
+    <persons>
+      {for $insured at $pos in $agreement//insured
+       return 
+         <person number="{$pos}">
+           <name>{data($insured/person/pers/first_name)} {data($insured/person/pers/last_name)}</name>
+           <gender>{data($insured/gender)}</gender>
+           <phone>{data($insured/phone_number)}</phone>
+         </person>}
+    </persons>
+  </multi_person_contract>
+
+Запит 6: Статистика по валютах з умовою
+for $currency in distinct-values(//prop/@currency)
+let $properties := //prop[@currency=$currency]
+let $total := sum($properties/value)
+let $max_value := max($properties/value)
+let $min_value := min($properties/value)
+where count($properties) > 0
+order by $total descending
+return 
+  <currency_statistics>
+    <currency>{$currency}</currency>
+    <properties_count>{count($properties)}</properties_count>
+    <total_value>{$total}</total_value>
+    <average_value>{round($total div count($properties))}</average_value>
+    <max_value>{$max_value}</max_value>
+    <min_value>{$min_value}</min_value>
+    <has_premium>
+      {if (some $prop in $properties satisfies $prop/value > 5000000) 
+       then 'Так' 
+       else 'Ні'}
+    </has_premium>
+  </currency_statistics>
+
+
+(: Запит 1: Вивести ім'я та контактну інформацію про страхувальника, 
+   який застрахував будинок на суму 2 млн. грн. :)
+
+for $insured in //insured
+let $person := $insured/person/pers
+let $property := $insured//insurance_object/property/prop
+where $property/description[contains(., 'Будинок')] 
+  and $property/value >= 2000000
+  and $property/@currency = 'UAH'
+return
+  <insured_person>
+    <full_name>{data($person/first_name)} {data($person/last_name)}</full_name>
+    <contact_info>
+      <phone>{data($person/phone_number)}</phone>
+      <email>{data($person/email)}</email>
+      <address>{data($insured/address)}</address>
+    </contact_info>
+    <insured_property>
+      <description>{data($property/description)}</description>
+      <value>{data($property/value)} {data($property/@currency)}</value>
+      <location>{data($property/location)}</location>
+    </insured_property>
+  </insured_person>
+
+
+(: ========================================================================= :)
+
+
+(: Запит 2: Вивести кількість укладених компанією договорів страхування 
+   та на яку сукупно суму застраховано вказані в них об'єкти за минулий квартал :)
+
+let $agreements := //agreement[
+  starts-with(conclusion_date, '2024-07') or 
+  starts-with(conclusion_date, '2024-08') or 
+  starts-with(conclusion_date, '2024-09')
+]
+
+let $total_count := count($agreements)
+let $total_amount := sum($agreements/total_insurance_amount)
+
+return
+  <quarterly_report>
+    <period>
+      <quarter>Q3 2024 (липень - вересень)</quarter>
+      <year>2024</year>
+    </period>
+    <statistics>
+      <total_agreements>{$total_count}</total_agreements>
+      <total_insured_amount>{round($total_amount, 2)}</total_insured_amount>
+      <average_amount_per_agreement>
+        {if ($total_count > 0) then round($total_amount div $total_count, 2) else 0}
+      </average_amount_per_agreement>
+    </statistics>
+    <agreements>
+      {for $agreement in $agreements
+       order by $agreement/conclusion_date
+       return
+         <agreement>
+           <id>{data($agreement/@id)}</id>
+           <conclusion_date>{data($agreement/conclusion_date)}</conclusion_date>
+           <amount>{data($agreement/total_insurance_amount)}</amount>
+           <status>{data($agreement/@status)}</status>
+         </agreement>}
+    </agreements>
+  </quarterly_report>
+
+
+(: ========================================================================= :)
+
+
+(: Запит 3: Вивести інформацію про об'єкт(-ти) страхування, страхувальника, 
+   сума страхування якого була найменшою в практиці страхової компанії :)
+
+let $min_amount := min(//agreement/total_insurance_amount)
+
+for $agreement in //agreement[total_insurance_amount = $min_amount]
+return
+  <minimal_insurance>
+    <agreement_id>{data($agreement/@id)}</agreement_id>
+    <amount>{data($agreement/total_insurance_amount)}</amount>
+    <status>{data($agreement/@status)}</status>
+    <conclusion_date>{data($agreement/conclusion_date)}</conclusion_date>
+    
+    {for $insured in $agreement//insured
+     let $person := $insured/person/pers
+     return
+       <insured_person>
+         <name>{data($person/first_name)} {data($person/last_name)}</name>
+         <phone>{data($person/phone_number)}</phone>
+         <email>{data($person/email)}</email>
+         <address>{data($insured/address)}</address>
+         
+         <objects>
+           {for $obj in $insured//insurance_object
+            let $prop := $obj/property/prop
+            return
+              <object type="{data($obj/@type)}">
+                <description>{data($prop/description)}</description>
+                <value>{data($prop/value)} {data($prop/@currency)}</value>
+                <location>{data($prop/location)}</location>
+              </object>}
+         </objects>
+       </insured_person>}
+  </minimal_insurance>

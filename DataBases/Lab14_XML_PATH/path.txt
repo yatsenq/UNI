@@ -1,0 +1,3 @@
+чи особа чи майно, коли цей договір був укладений і цікавлять тільки ті страхування які будуть відповідати сумі страхування > за середню по страховій команії вивести айді і що страхуємо особу чи майно і середню суму
+
+//agreement[total_insurance_amount > avg(//agreement/total_insurance_amount)]/@id | //agreement[total_insurance_amount > avg(//agreement/total_insurance_amount)]//insurance_object/@type

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE insurance_database [
+
+<!ELEMENT insurance_database (agreements)>
+<!ATTLIST insurance_database export_date CDATA #REQUIRED system CDATA #REQUIRED>
+<!ELEMENT agreements (agreement*)>
+<!ELEMENT agreement (conclusion_date, total_insurance_amount, duration_months, insurance_policies)>
+<!ATTLIST agreement id CDATA #REQUIRED status CDATA #REQUIRED>
+<!ELEMENT conclusion_date (#PCDATA)>
+<!ELEMENT total_insurance_amount (#PCDATA)>
+<!ELEMENT duration_months (#PCDATA)>
+<!ELEMENT insurance_policies (policy*)>
+<!ELEMENT policy (start_date, end_date, insurance_amount, insured_persons)>
+<!ATTLIST policy id CDATA #REQUIRED>
+<!ELEMENT start_date (#PCDATA)>
+<!ELEMENT end_date (#PCDATA)>
+<!ELEMENT insurance_amount (#PCDATA)>
+<!ELEMENT insured_persons (insured*)>
+<!ELEMENT insured (address?, phone_number?, email?, gender, birth_date, insurance_objects, person)>
+<!ATTLIST insured id CDATA #REQUIRED person_ref CDATA #REQUIRED>
+<!ELEMENT address (#PCDATA)>
+<!ELEMENT phone_number (#PCDATA)>
+<!ELEMENT email (#PCDATA)>
+<!ELEMENT gender (#PCDATA)>
+<!ELEMENT birth_date (#PCDATA)>
+<!ELEMENT insurance_objects (insurance_object*)>
+<!ELEMENT insurance_object (insured_ref, property_ref, property)>
+<!ATTLIST insurance_object id CDATA #REQUIRED type CDATA #REQUIRED>
+<!ELEMENT insured_ref (#PCDATA)>
+<!ELEMENT property_ref (#PCDATA)>
+<!ELEMENT property (prop)>
+<!ELEMENT prop (description, value, year_of_issue?, location?)>
+<!ATTLIST prop id CDATA #REQUIRED currency CDATA #REQUIRED>
+<!ELEMENT description (#PCDATA)>
+<!ELEMENT value (#PCDATA)>
+<!ELEMENT year_of_issue (#PCDATA)>
+<!ELEMENT location (#PCDATA)>
+<!ELEMENT person (pers)>
+<!ELEMENT pers (first_name, last_name, gender, birth_date, email?, phone_number?)>
+<!ATTLIST pers id CDATA #REQUIRED>
+<!ELEMENT first_name (#PCDATA)>
+<!ELEMENT last_name (#PCDATA)>
+]>
+<insurance_database export_date="2025-10-19T12:32:26.949439+03:00" system="Insurance System v1.0">
+	<agreements>
+		<agreement id="2" status="Completed">
+			<conclusion_date>2024-04-17</conclusion_date>
+			<total_insurance_amount>1778039.32</total_insurance_amount>
+			<duration_months>24</duration_months>
+			<insurance_policies>
+				<policy id="445">
+					<start_date>2024-01-13</start_date>
+					<end_date>2026-01-02</end_date>
+					<insurance_amount>45000.00</insurance_amount>
+					<insured_persons>
+						<insured id="1" person_ref="913">
+							<address>Київ, вул. Франка, 1, кв. 37</address>
+							<phone_number>+380992529474</phone_number>
+							<email>client1@example.com</email>
+							<gender>F</gender>
+							<birth_date>1993-06-21</birth_date>
+							<insurance_objects>
+								<insurance_object id="1" type="Vehicle">
+									<insured_ref>173</insured_ref>
+									<property_ref>629</property_ref>
+									<property>
+										<prop id="1" currency="UAH">
+											<description>Hyundai Qashqai, 2012 року випуску</description>
+											<value>9816622.37</value>
+											<year_of_issue>2002</year_of_issue>
+											<location>Буча, передмістя</location>
+										</prop>
+									</property>
+								</insurance_object>
+							</insurance_objects>
+							<person>
+								<pers id="2">
+									<first_name>Ірина</first_name>
+									<last_name>Левченко</last_name>
+									<gender>F</gender>
+									<birth_date>1964-10-28</birth_date>
+									<email>iryna.levchenko@yahoo.com</email>
+									<phone_number>+380993939093</phone_number>
+								</pers>
+							</person>
+						</insured>
+					</insured_persons>
+				</policy>
+			</insurance_policies>
+		</agreement>
+	</agreements>
+</insurance_database>

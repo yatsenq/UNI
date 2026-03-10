@@ -1,0 +1,14 @@
+ParallelObch/Lab8
+ParallelObch/Lab9
+bal/
+
+# IDE та системні файли 
+.idea/
+**/__pycache__/
+*.user
+*.sln.DotSettings.user
+.vs/
+*.ipch
+# Тимчасові файли
+*.tmp
+*.log
