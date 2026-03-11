@@ -150,7 +150,8 @@ class Matrix:
         return math.sqrt(s)
 
     def copy(self):
-        return Matrix(data=self.data)
+        copied_data = [row[:] for row in self.data]
+        return Matrix(data=copied_data)
 
     def __str__(self):
         if self.rows == 0 or self.cols == 0:

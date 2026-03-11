@@ -23,6 +23,7 @@ class SLAE:
         self.x = Vector()
         self.solution_status = "not_solved"
         self.dec_matrix = Matrix()
+        self.dec_error = None
 
     def _validate_system(self):
         n = self.A.rows
@@ -35,55 +36,63 @@ class SLAE:
         return n
 
     def _build_augmented(self):
-        n = self.A.rows
-        aug_data = []
-        for i in range(n):
-            row = []
-            for j in range(n):
-                row.append(self.A.get(i, j))
-            row.append(self.b.get(i))
-            aug_data.append(row)
-        return aug_data
+        try:
+            n = self.A.rows
+            aug_data = []
+            for i in range(n):
+                row = []
+                for j in range(n):
+                    row.append(self.A.get(i, j))
+                row.append(self.b.get(i))
+                aug_data.append(row)
+            return aug_data
+        except Exception as e:
+            raise ValueError(f"Не вдалося сформувати розширену матрицю [A|b]: {e}")
 
-    def _identity_list(self, n):
-        return [[1.0 if i == j else 0.0 for j in range(n)] for i in range(n)]
+    # def _identity_list(self, n):
+    #     return [[1.0 if i == j else 0.0 for j in range(n)] for i in range(n)]
 
     def _lu_decompose(self, eps=1e-12):
         # діагональ = 1 / pivot,
-        # під діагоналлю = -(a_ik / pivot),
-        # над діагоналлю = елементи нормованого рядка після ділення на pivot.
-        n = self.A.rows
-        u = [row[:] for row in self.A.data]
-        dec_a = [[0.0] * n for _ in range(n)]
+        # під діагоналлю = -(a_ik / pivot), (множники f)
+        # над діагоналлю = елементи нормованого рядка після ділення на pivot. 
+        try:
+            n = self.A.rows
+            u = [row[:] for row in self.A.data]
+            dec_a = [[0.0] * n for _ in range(n)]
 
-        for k in range(n):
-            pivot = u[k][k]
-            if abs(pivot) < eps:
-                raise ValueError("Нульовий ведучий елемент! Потрібна перестановка рядків.")
+            for k in range(n):
+                pivot = u[k][k]
+                if abs(pivot) < eps:
+                    raise ValueError("Нульовий ведучий елемент!")
 
-            dec_a[k][k] = 1.0 / pivot
+                dec_a[k][k] = 1.0 / pivot
 
-            for i in range(k + 1, n):
-                multiplier = -(u[i][k] / pivot)
-                dec_a[i][k] = multiplier
+                for i in range(k + 1, n):
+                    multiplier = -(u[i][k] / pivot)
+                    dec_a[i][k] = multiplier
+
+                    for j in range(k, n):
+                        if j == k:
+                            u[i][j] = 0.0
+                        else:
+                            u[i][j] += multiplier * u[k][j]
 
                 for j in range(k, n):
-                    if j == k:
-                        u[i][j] = 0.0
-                    else:
-                        u[i][j] += multiplier * u[k][j]
+                    u[k][j] /= pivot
 
-            for j in range(k, n):
-                u[k][j] /= pivot
+                for j in range(k + 1, n):
+                    dec_a[k][j] = u[k][j]
 
-            for j in range(k + 1, n):
-                dec_a[k][j] = u[k][j]
+            self.dec_matrix = Matrix(data=dec_a)
+            self.dec_error = None
+        except ValueError:
+            raise
+        except Exception as e:
+            raise ValueError(f"Помилка декомпозиції матриці: {e}")
 
-        self.dec_matrix = Matrix(data=dec_a)
-
-    def solve_gauss_general(self, eps=1e-12):
+    def _solve_core(self, eps=1e-12):
         n = self._validate_system()
-        self._lu_decompose(eps=eps)
 
         aug = self._build_augmented()
         pivot_cols = []
@@ -124,11 +133,13 @@ class SLAE:
             if non_zero_ab:
                 rank_ab += 1
             if (not non_zero_a) and abs(aug[i][n]) >= eps:
-                inconsistent = True
+                inconsistent = True #0 = 5
 
         if inconsistent or rank_a < rank_ab:
             self.x = Vector()
             self.solution_status = "no_solution"
+            self.dec_matrix = Matrix()
+            self.dec_error = None
             return {
                 "status": "no_solution",
                 "message": "Система несумісна: розв'язків немає.",
@@ -139,6 +150,8 @@ class SLAE:
         if rank_a < n:
             self.x = Vector()
             self.solution_status = "infinite_solutions"
+            self.dec_matrix = Matrix()
+            self.dec_error = None
             return {
                 "status": "infinite_solutions",
                 "message": "Система сумісна, але має безліч розв'язків.",
@@ -155,6 +168,12 @@ class SLAE:
                 raise ValueError("Неможливо завершити зворотний хід через нульовий півот.")
             x_data[i] = s / aug[i][i]
 
+        try:
+            self._lu_decompose(eps=eps)
+        except Exception as e:
+            self.dec_matrix = Matrix()
+            self.dec_error = str(e)
+
         self.x = Vector(data=x_data)
         self.solution_status = "unique_solution"
         return {
@@ -165,23 +184,24 @@ class SLAE:
             "x": self.x,
         }
 
-    def solve_gauss(self):
-        result = self.solve_gauss_general()
-        if result["status"] != "unique_solution":
-            raise ValueError(result["message"])
-        return result["x"]
+    def solve_gauss_general(self, eps=1e-12):
+        try:
+            return self._solve_core(eps=eps)
+        except ValueError:
+            raise
+        except Exception as e:
+            raise RuntimeError(f"Невідома помилка при розв'язуванні СЛАР: {e}")
 
-    def solve_methodical(self):
-        return self.solve_gauss_general()
-
-    def solve_with_dec_matrix(self, matrix=None, vector=None):
-        if matrix is not None:
-            self.A = matrix.copy()
-            self.A_orig = self.A.copy()
-        if vector is not None:
-            self.b = vector.copy()
-            self.b_orig = self.b.copy()
-        return self.solve_methodical()
+    # def solve_gauss(self):
+    #     try:
+    #         result = self.solve_gauss_general()
+    #         if result["status"] != "unique_solution":
+    #             raise ValueError(result["message"])
+    #         return result["x"]
+    #     except ValueError:
+    #         raise
+    #     except Exception as e:
+    #         raise RuntimeError(f"Помилка solve_gauss: {e}")
 
     def inverse_gauss_jordan(self):
         n = self.A_orig.rows
@@ -196,7 +216,7 @@ class SLAE:
         for k in range(n):
             max_row = max(range(k, n), key=lambda r: abs(aug[r][k]))
             if abs(aug[max_row][k]) < 1e-12:
-                raise ValueError("Матриця вироджена — обернена не існує.")
+                raise ValueError("Матриця вироджена - обернена не існує.")
             aug[k], aug[max_row] = aug[max_row], aug[k]
 
             pivot = aug[k][k]
@@ -210,11 +230,10 @@ class SLAE:
         inv_data = [aug[i][n:] for i in range(n)]
         return Matrix(data=inv_data)
 
-    def inverse_matrix_gauss(self, eps=1e-12):
-        return self.inverse_gauss_jordan()
-
     def decomposition_text(self):
         if self.dec_matrix.rows == 0:
+            if self.dec_error:
+                return f"Декомпозицію не обчислено: {self.dec_error}"
             return "Декомпонована матриця ще не обчислена."
         text = "Декомпонована матриця:\n"
         text += "  діагональ — 1/pivot\n"

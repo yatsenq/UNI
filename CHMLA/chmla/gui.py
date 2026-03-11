@@ -691,11 +691,10 @@ class App:
                 messagebox.showwarning("Увага", "Заповніть матрицю A.")
                 return
             system = SLAE(A=a, b=Vector(size=a.rows))
-            inv = system.inverse_matrix_gauss()
+            inv = system.inverse_gauss_jordan()
 
             text = "Обернена матриця A:\n\n"
             text += f"{inv}\n\n"
-            text += "Коротко про метод:\n"
             text += "1) Формуємо [A|I].\n"
             text += "2) Елементарними перетвореннями рядків приводимо ліву частину до I.\n"
             text += "3) Права частина стає A^(-1)."
