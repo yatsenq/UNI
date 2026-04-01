@@ -4,6 +4,7 @@ import os
 from matrix import Matrix
 from vector import Vector
 from slae import SLAE
+from seidel import SeidelSolver
 
 
 class App:
@@ -34,6 +35,10 @@ class App:
         tab_slae = ttk.Frame(notebook)
         notebook.add(tab_slae, text="  Розв'язок СЛАР методом Гауса  ")
         self._build_slae_tab(tab_slae)
+
+        tab_seidel = ttk.Frame(notebook)
+        notebook.add(tab_seidel, text="  Ітераційний метод Зейделя  ")
+        self._build_seidel_tab(tab_seidel)
 
     # вкладка матриць 
     def _build_matrix_tab(self, parent):
@@ -306,6 +311,123 @@ class App:
 
         self.text_slae_result = tk.Text(res_frame, height=10, font=("Courier New", 10))
         self.text_slae_result.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
+
+    def _build_seidel_tab(self, parent):
+        paned = ttk.PanedWindow(parent, orient=tk.HORIZONTAL)
+        paned.pack(fill=tk.BOTH, expand=True, padx=4, pady=4)
+
+        left = ttk.Frame(paned)
+        right = ttk.Frame(paned)
+        paned.add(left, weight=2)
+        paned.add(right, weight=2)
+
+        frame_a = ttk.LabelFrame(left, text="Матриця A")
+        frame_a.pack(fill=tk.BOTH, expand=True, padx=4, pady=(4, 2))
+        self.text_seidel_a = tk.Text(frame_a, height=10, font=("Courier New", 10))
+        self.text_seidel_a.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
+
+        frame_b = ttk.LabelFrame(left, text="Вектор b (через пробіл)")
+        frame_b.pack(fill=tk.X, padx=4, pady=(2, 4))
+        self.entry_seidel_b = ttk.Entry(frame_b, font=("Courier New", 10))
+        self.entry_seidel_b.pack(fill=tk.X, padx=5, pady=5)
+
+        controls = ttk.LabelFrame(right, text="Налаштування методу Зейделя")
+        controls.pack(fill=tk.X, padx=4, pady=(4, 2))
+
+        row1 = ttk.Frame(controls)
+        row1.pack(fill=tk.X, padx=5, pady=4)
+        ttk.Label(row1, text="n:").pack(side=tk.LEFT)
+        self.entry_seidel_n = ttk.Entry(row1, width=4)
+        self.entry_seidel_n.insert(0, "3")
+        self.entry_seidel_n.pack(side=tk.LEFT, padx=2)
+        ttk.Label(row1, text="від:").pack(side=tk.LEFT, padx=(8, 0))
+        self.entry_seidel_low = ttk.Entry(row1, width=6)
+        self.entry_seidel_low.insert(0, "-5")
+        self.entry_seidel_low.pack(side=tk.LEFT, padx=2)
+        ttk.Label(row1, text="до:").pack(side=tk.LEFT)
+        self.entry_seidel_high = ttk.Entry(row1, width=6)
+        self.entry_seidel_high.insert(0, "10")
+        self.entry_seidel_high.pack(side=tk.LEFT, padx=2)
+        self.int_var_seidel = tk.BooleanVar(value=False)
+        ttk.Checkbutton(row1, text="цілі", variable=self.int_var_seidel).pack(side=tk.LEFT, padx=6)
+
+        row2 = ttk.Frame(controls)
+        row2.pack(fill=tk.X, padx=5, pady=4)
+        ttk.Label(row2, text="eps:").pack(side=tk.LEFT)
+        self.entry_seidel_eps = ttk.Entry(row2, width=10)
+        self.entry_seidel_eps.insert(0, "1e-6")
+        self.entry_seidel_eps.pack(side=tk.LEFT, padx=2)
+        ttk.Label(row2, text="max_iter:").pack(side=tk.LEFT, padx=(8, 0))
+        self.entry_seidel_iter = ttk.Entry(row2, width=8)
+        self.entry_seidel_iter.insert(0, "200")
+        self.entry_seidel_iter.pack(side=tk.LEFT, padx=2)
+
+        row3 = ttk.Frame(controls)
+        row3.pack(fill=tk.X, padx=5, pady=4)
+        ttk.Button(
+            row3,
+            text="Згенерувати A,b",
+            command=lambda: self._seidel_generate(
+                self.text_seidel_a,
+                self.entry_seidel_b,
+                self.entry_seidel_n,
+                self.entry_seidel_low,
+                self.entry_seidel_high,
+                self.int_var_seidel,
+            ),
+        ).pack(side=tk.LEFT, padx=2)
+        ttk.Button(
+            row3,
+            text="Розв'язати (Зейдель)",
+            command=lambda: self._seidel_solve(
+                self.text_seidel_a,
+                self.entry_seidel_b,
+                self.entry_seidel_eps,
+                self.entry_seidel_iter,
+                self.text_seidel_result,
+            ),
+        ).pack(side=tk.LEFT, padx=2)
+
+        row4 = ttk.Frame(controls)
+        row4.pack(fill=tk.X, padx=5, pady=4)
+        ttk.Button(
+            row4,
+            text="Відкрити A",
+            command=lambda: self._seidel_load_matrix(self.text_seidel_a),
+        ).pack(side=tk.LEFT, padx=2)
+        ttk.Button(
+            row4,
+            text="Відкрити b",
+            command=lambda: self._seidel_load_vector(self.entry_seidel_b),
+        ).pack(side=tk.LEFT, padx=2)
+
+        row5 = ttk.Frame(controls)
+        row5.pack(fill=tk.X, padx=5, pady=4)
+        ttk.Button(
+            row5,
+            text="Демо 1: умови збіжності виконуються",
+            command=lambda: self._seidel_load_demo(
+                self.text_seidel_a,
+                self.entry_seidel_b,
+                "matrix_seidel_conv.txt",
+                "vector_seidel_conv.txt",
+            ),
+        ).pack(side=tk.LEFT, padx=2)
+        ttk.Button(
+            row5,
+            text="Демо 2: умови збіжності НЕ виконуються",
+            command=lambda: self._seidel_load_demo(
+                self.text_seidel_a,
+                self.entry_seidel_b,
+                "matrix_seidel_noconv.txt",
+                "vector_seidel_noconv.txt",
+            ),
+        ).pack(side=tk.LEFT, padx=2)
+
+        result_frame = ttk.LabelFrame(right, text="Результат")
+        result_frame.pack(fill=tk.BOTH, expand=True, padx=4, pady=(2, 4))
+        self.text_seidel_result = tk.Text(result_frame, font=("Courier New", 10))
+        self.text_seidel_result.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
 
     def _parse_matrix_from_text(self, text_widget):
         content = text_widget.get("1.0", tk.END).strip()
@@ -722,3 +844,86 @@ class App:
             self._display_vector_in_entry(self.entry_slae_b, b)
         except Exception as e:
             messagebox.showerror("Помилка", f"Не вдалося завантажити демо-приклад:\n{e}")
+
+    def _seidel_generate(self, text_a, entry_b, entry_n, entry_low, entry_high, use_int):
+        try:
+            n = int(entry_n.get())
+            low = float(entry_low.get())
+            high = float(entry_high.get())
+            a = Matrix.random_matrix(n, n, low, high, use_int.get())
+            b = Vector.random_vector(n, low, high, use_int.get())
+            self._display_matrix_in_text(text_a, a)
+            self._display_vector_in_entry(entry_b, b)
+        except Exception as e:
+            messagebox.showerror("Помилка", f"Не вдалося згенерувати дані:\n{e}")
+
+    def _seidel_load_matrix(self, text_a):
+        filename = filedialog.askopenfilename(
+            title="Завантажити матрицю A для Зейделя",
+            filetypes=[("Текстові файли", "*.txt"), ("Усі файли", "*.*")],
+        )
+        if not filename:
+            return
+        try:
+            a = Matrix.from_file(filename)
+            self._display_matrix_in_text(text_a, a)
+        except Exception as e:
+            messagebox.showerror("Помилка", f"Не вдалося прочитати матрицю:\n{e}")
+
+    def _seidel_load_vector(self, entry_b):
+        filename = filedialog.askopenfilename(
+            title="Завантажити вектор b для Зейделя",
+            filetypes=[("Текстові файли", "*.txt"), ("Усі файли", "*.*")],
+        )
+        if not filename:
+            return
+        try:
+            b = Vector.from_file(filename)
+            self._display_vector_in_entry(entry_b, b)
+        except Exception as e:
+            messagebox.showerror("Помилка", f"Не вдалося прочитати вектор:\n{e}")
+
+    def _seidel_load_demo(self, text_a, entry_b, matrix_name, vector_name):
+        try:
+            base = os.path.join(os.path.dirname(__file__), "examples")
+            a = Matrix.from_file(os.path.join(base, matrix_name))
+            b = Vector.from_file(os.path.join(base, vector_name))
+            self._display_matrix_in_text(text_a, a)
+            self._display_vector_in_entry(entry_b, b)
+        except Exception as e:
+            messagebox.showerror("Помилка", f"Не вдалося завантажити демо:\n{e}")
+
+    def _seidel_solve(self, text_a, entry_b, entry_eps, entry_iter, text_result):
+        try:
+            a = self._parse_matrix_from_text(text_a)
+            b = self._parse_vector_from_entry(entry_b)
+            if a is None or b is None:
+                messagebox.showwarning("Увага", "Заповніть матрицю A та вектор b.")
+                return
+
+            eps = float(entry_eps.get())
+            max_iter = int(entry_iter.get())
+
+            solver = SeidelSolver(a, b)
+            info = solver.solve(eps=eps, max_iterations=max_iter)
+
+            lines = []
+            lines.append("Ітераційний метод Зейделя\n")
+            lines.append(f"Умова збіжності (строга діагональна перевага): {'виконується' if info['dominance'] else 'не виконується'}")
+            lines.append(f"Збіжність за критерієм |x(k)-x(k-1)|<eps: {'так' if info['converged'] else 'ні'}")
+            lines.append(f"Кількість ітерацій: {info['iterations']}")
+            lines.append(f"Остання різниця: {info['last_diff']:.3e}")
+            lines.append(f"Норма нев'язки ||Ax-b||: {info['residual_norm']:.3e}\n")
+
+            if info.get('overflow_detected'):
+                lines.append("Попередження: ітерації розбігаються (переповнення чисел).")
+                lines.append("Для цього прикладу умови збіжності не виконуються.\n")
+
+            lines.append("Вектор x:")
+            for i in range(info['x'].size):
+                lines.append(f"  x[{i + 1}] = {info['x'].get(i):.8f}")
+
+            text_result.delete("1.0", tk.END)
+            text_result.insert("1.0", "\n".join(lines))
+        except Exception as e:
+            messagebox.showerror("Помилка", str(e))
