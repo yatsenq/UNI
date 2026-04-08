@@ -5,6 +5,7 @@ from matrix import Matrix
 from vector import Vector
 from slae import SLAE
 from seidel import SeidelSolver
+from band_gauss import BandMatrixVector, BandGaussianSolver
 
 
 class App:
@@ -296,6 +297,31 @@ class App:
         ttk.Separator(right_slae, orient=tk.HORIZONTAL).pack(fill=tk.X, padx=10, pady=5)
         ttk.Button(right_slae, text="Розв'язати методом Гауса",
                command=self._solve_slae).pack(padx=10, pady=(5, 3), fill=tk.X)
+
+        band_frame = ttk.LabelFrame(right_slae, text="Стрічкова матриця (окремий пункт)")
+        band_frame.pack(fill=tk.X, padx=4, pady=(0, 4))
+
+        band_row = ttk.Frame(band_frame)
+        band_row.pack(fill=tk.X, padx=5, pady=4)
+        ttk.Label(band_row, text="lower bw:").pack(side=tk.LEFT)
+        self.entry_band_lower = ttk.Entry(band_row, width=4)
+        self.entry_band_lower.insert(0, "1")
+        self.entry_band_lower.pack(side=tk.LEFT, padx=2)
+        ttk.Label(band_row, text="upper bw:").pack(side=tk.LEFT, padx=(8, 0))
+        self.entry_band_upper = ttk.Entry(band_row, width=4)
+        self.entry_band_upper.insert(0, "1")
+        self.entry_band_upper.pack(side=tk.LEFT, padx=2)
+        ttk.Button(
+            band_row,
+            text="Розв'язати стрічковим Гаусом",
+            command=self._solve_band_slae,
+        ).pack(side=tk.LEFT, padx=8)
+        ttk.Button(
+            band_row,
+            text="Демо стрічкової системи",
+            command=self._load_demo_band_slae,
+        ).pack(side=tk.LEFT, padx=2)
+
         ttk.Button(right_slae, text="Знайти обернену матрицю A (метод Гауса)",
                command=self._inverse_slae_matrix).pack(padx=10, pady=(0, 5), fill=tk.X)
 
@@ -806,6 +832,43 @@ class App:
         except Exception as e:
             messagebox.showerror("Помилка", str(e))
 
+    def _solve_band_slae(self):
+        try:
+            a = self._parse_matrix_from_text(self.text_slae_a)
+            b = self._parse_vector_from_entry(self.entry_slae_b)
+            if a is None or b is None:
+                messagebox.showwarning("Увага", "Заповніть матрицю A та вектор b.")
+                return
+
+            lower_bw = int(self.entry_band_lower.get())
+            upper_bw = int(self.entry_band_upper.get())
+            if lower_bw < 0 or upper_bw < 0:
+                raise ValueError("Ширини стрічки мають бути невід'ємними.")
+
+            band = BandMatrixVector.from_dense(a, lower_bw=lower_bw, upper_bw=upper_bw)
+            info = BandGaussianSolver(band, b).solve()
+
+            lines = []
+            lines.append("Розв'язок СЛАР методом Гауса для стрічкової матриці\n")
+            lines.append(f"Параметри стрічки: lower={lower_bw}, upper={upper_bw}")
+            lines.append(f"Розмір вектора збереження A: {len(info['storage_vector'])}")
+            lines.append("Вектор ненульових елементів A (по рядках у межах стрічки):")
+            lines.append("  " + " ".join(f"{v:.6g}" for v in info["storage_vector"]))
+            lines.append("")
+
+            x = info["x"]
+            for i in range(x.size):
+                lines.append(f"  x[{i + 1}] = {x.get(i):.6f}")
+
+            lines.append("")
+            lines.append(f"Норма нев'язки ||Ax-b||: {info['residual_norm']:.2e}")
+            lines.append(f"Вектор нев'язки: {info['residual']}")
+
+            self.text_slae_result.delete("1.0", tk.END)
+            self.text_slae_result.insert("1.0", "\n".join(lines))
+        except Exception as e:
+            messagebox.showerror("Помилка", str(e))
+
     def _inverse_slae_matrix(self):
         try:
             a = self._parse_matrix_from_text(self.text_slae_a)
@@ -831,6 +894,13 @@ class App:
 
     def _load_demo_ill_slae(self):
         self._load_demo_slae_files("matrix_ill.txt", "vector_ill.txt")
+
+    def _load_demo_band_slae(self):
+        self._load_demo_slae_files("matrix_band.txt", "vector_band.txt")
+        self.entry_band_lower.delete(0, tk.END)
+        self.entry_band_lower.insert(0, "1")
+        self.entry_band_upper.delete(0, tk.END)
+        self.entry_band_upper.insert(0, "1")
 
     def _load_demo_slae_files(self, matrix_name, vector_name):
         try:
