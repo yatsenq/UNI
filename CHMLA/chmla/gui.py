@@ -6,12 +6,13 @@ from vector import Vector
 from slae import SLAE
 from seidel import SeidelSolver
 from band_gauss import BandMatrixVector, BandGaussianSolver
+from graph_tools import SparseGraphMatrix
 
 
 class App:
     def __init__(self, root):
         self.root = root
-        self.root.title("Лабораторна 1 — Матриці та СЛАР")
+        self.root.title("Лабораторні роботи — Матриці, СЛАР і графи")
         self.root.geometry("1050x750")
         self.root.minsize(850, 600)
 
@@ -40,6 +41,10 @@ class App:
         tab_seidel = ttk.Frame(notebook)
         notebook.add(tab_seidel, text="  Ітераційний метод Зейделя  ")
         self._build_seidel_tab(tab_seidel)
+
+        tab_lab4 = ttk.Frame(notebook)
+        notebook.add(tab_lab4, text="  ЛР4: графи і стрічкові матриці  ")
+        self._build_lab4_tab(tab_lab4)
 
     # вкладка матриць 
     def _build_matrix_tab(self, parent):
@@ -455,6 +460,78 @@ class App:
         self.text_seidel_result = tk.Text(result_frame, font=("Courier New", 10))
         self.text_seidel_result.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
 
+    def _build_lab4_tab(self, parent):
+        paned = ttk.PanedWindow(parent, orient=tk.HORIZONTAL)
+        paned.pack(fill=tk.BOTH, expand=True, padx=4, pady=4)
+
+        left = ttk.Frame(paned)
+        right = ttk.Frame(paned)
+        paned.add(left, weight=2)
+        paned.add(right, weight=2)
+
+        frame_a = ttk.LabelFrame(left, text="Розріджена матриця A")
+        frame_a.pack(fill=tk.BOTH, expand=True, padx=4, pady=(4, 2))
+        self.text_lab4_a = tk.Text(frame_a, height=12, font=("Courier New", 10))
+        self.text_lab4_a.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
+
+        frame_b = ttk.LabelFrame(left, text="Вектор b (через пробіл)")
+        frame_b.pack(fill=tk.X, padx=4, pady=(2, 4))
+        self.entry_lab4_b = ttk.Entry(frame_b, font=("Courier New", 10))
+        self.entry_lab4_b.pack(fill=tk.X, padx=5, pady=5)
+
+        demo_frame = ttk.LabelFrame(left, text="Демо приклади")
+        demo_frame.pack(fill=tk.X, padx=4, pady=(0, 4))
+        ttk.Button(
+            demo_frame,
+            text="Приклад 1",
+            command=lambda: self._lab4_load_demo("matrix_lab4_1.txt", "vector_lab4_1.txt"),
+        ).pack(side=tk.LEFT, padx=4, pady=4)
+        ttk.Button(
+            demo_frame,
+            text="Приклад 2",
+            command=lambda: self._lab4_load_demo("matrix_lab4_2.txt", "vector_lab4_2.txt"),
+        ).pack(side=tk.LEFT, padx=4, pady=4)
+        ttk.Button(
+            demo_frame,
+            text="Приклад 3",
+            command=lambda: self._lab4_load_demo("matrix_lab4_3.txt", "vector_lab4_3.txt"),
+        ).pack(side=tk.LEFT, padx=4, pady=4)
+
+        load_frame = ttk.Frame(left)
+        load_frame.pack(fill=tk.X, padx=4, pady=(0, 4))
+        ttk.Button(load_frame, text="Відкрити A", command=lambda: self._load_matrix_lab4()).pack(side=tk.LEFT, padx=2)
+        ttk.Button(load_frame, text="Відкрити b", command=lambda: self._load_vector_lab4()).pack(side=tk.LEFT, padx=2)
+
+        controls = ttk.LabelFrame(right, text="Операції над графом і матрицею")
+        controls.pack(fill=tk.X, padx=4, pady=(4, 2))
+
+        path_row = ttk.Frame(controls)
+        path_row.pack(fill=tk.X, padx=5, pady=4)
+        ttk.Label(path_row, text="i:").pack(side=tk.LEFT)
+        self.entry_lab4_i = ttk.Entry(path_row, width=4)
+        self.entry_lab4_i.insert(0, "1")
+        self.entry_lab4_i.pack(side=tk.LEFT, padx=2)
+        ttk.Label(path_row, text="j:").pack(side=tk.LEFT, padx=(8, 0))
+        self.entry_lab4_j = ttk.Entry(path_row, width=4)
+        self.entry_lab4_j.insert(0, "3")
+        self.entry_lab4_j.pack(side=tk.LEFT, padx=2)
+        ttk.Button(path_row, text="Перевірити шлях", command=self._lab4_check_path).pack(side=tk.LEFT, padx=6)
+
+        op_row = ttk.Frame(controls)
+        op_row.pack(fill=tk.X, padx=5, pady=4)
+        ttk.Button(op_row, text="Гібс: псевдопериферійна вершина", command=self._lab4_gibbs).pack(side=tk.LEFT, padx=2)
+        ttk.Button(op_row, text="RCM: звести до стрічкової", command=self._lab4_reorder).pack(side=tk.LEFT, padx=2)
+
+        solve_row = ttk.Frame(controls)
+        solve_row.pack(fill=tk.X, padx=5, pady=4)
+        ttk.Button(solve_row, text="Розв'язати повною матрицею", command=self._lab4_solve_full).pack(side=tk.LEFT, padx=2)
+        ttk.Button(solve_row, text="Розв'язати стрічковою", command=self._lab4_solve_banded).pack(side=tk.LEFT, padx=2)
+
+        result_frame = ttk.LabelFrame(right, text="Результат")
+        result_frame.pack(fill=tk.BOTH, expand=True, padx=4, pady=(2, 4))
+        self.text_lab4_result = tk.Text(result_frame, font=("Courier New", 10))
+        self.text_lab4_result.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
+
     def _parse_matrix_from_text(self, text_widget):
         content = text_widget.get("1.0", tk.END).strip()
         if not content:
@@ -484,6 +561,147 @@ class App:
         entry_widget.delete(0, tk.END)
         values = ' '.join(f"{vector.get(i)}" for i in range(vector.size))
         entry_widget.insert(0, values)
+
+    def _lab4_parse_inputs(self):
+        a = self._parse_matrix_from_text(self.text_lab4_a)
+        b = self._parse_vector_from_entry(self.entry_lab4_b)
+        if a is None or b is None:
+            raise ValueError("Заповніть матрицю A та вектор b.")
+        return a, b
+
+    def _lab4_show(self, text):
+        self.text_lab4_result.delete("1.0", tk.END)
+        self.text_lab4_result.insert("1.0", text)
+
+    def _lab4_load_demo(self, matrix_name, vector_name):
+        try:
+            base = os.path.join(os.path.dirname(__file__), "examples")
+            a = Matrix.from_file(os.path.join(base, matrix_name))
+            b = Vector.from_file(os.path.join(base, vector_name))
+            self._display_matrix_in_text(self.text_lab4_a, a)
+            self._display_vector_in_entry(self.entry_lab4_b, b)
+        except Exception as e:
+            messagebox.showerror("Помилка", f"Не вдалося завантажити демо:\n{e}")
+
+    def _load_matrix_lab4(self):
+        filename = filedialog.askopenfilename(
+            title="Завантажити матрицю A для ЛР4",
+            filetypes=[("Текстові файли", "*.txt"), ("Усі файли", "*.*")],
+        )
+        if not filename:
+            return
+        try:
+            a = Matrix.from_file(filename)
+            self._display_matrix_in_text(self.text_lab4_a, a)
+        except Exception as e:
+            messagebox.showerror("Помилка", f"Не вдалося прочитати матрицю:\n{e}")
+
+    def _load_vector_lab4(self):
+        filename = filedialog.askopenfilename(
+            title="Завантажити вектор b для ЛР4",
+            filetypes=[("Текстові файли", "*.txt"), ("Усі файли", "*.*")],
+        )
+        if not filename:
+            return
+        try:
+            b = Vector.from_file(filename)
+            self._display_vector_in_entry(self.entry_lab4_b, b)
+        except Exception as e:
+            messagebox.showerror("Помилка", f"Не вдалося прочитати вектор:\n{e}")
+
+    def _lab4_graph(self):
+        a, _ = self._lab4_parse_inputs()
+        return SparseGraphMatrix(a)
+
+    def _lab4_check_path(self):
+        try:
+            graph = self._lab4_graph()
+            i = int(self.entry_lab4_i.get()) - 1
+            j = int(self.entry_lab4_j.get()) - 1
+            result = graph.shortest_path(i, j)
+
+            lines = ["Перевірка шляху в графі матриці A\n"]
+            lines.append(f"Вершини: i={i + 1}, j={j + 1}")
+            if result["exists"]:
+                path_text = " -> ".join(str(v + 1) for v in result["path"])
+                lines.append(f"Шлях існує.")
+                lines.append(f"Довжина шляху: {result['length']}")
+                lines.append(f"Шлях: {path_text}")
+            else:
+                lines.append("Шлях не існує: вершини лежать у різних компонентах графа.")
+
+            self._lab4_show("\n".join(lines))
+        except Exception as e:
+            messagebox.showerror("Помилка", str(e))
+
+    def _lab4_gibbs(self):
+        try:
+            graph = self._lab4_graph()
+            info = graph.gibbs_pseudo_peripheral_vertex()
+            lines = ["Метод Гібса для пошуку псевдопериферійної вершини\n"]
+            lines.append(f"Псевдопериферійна вершина: {info['vertex'] + 1}")
+            lines.append(f"Ексцентриситет: {info['eccentricity']}")
+            lines.append(f"Кількість рівнів BFS: {len(info['levels'])}")
+            lines.append("Рівні:")
+            for idx, level in enumerate(info["levels"], start=0):
+                lines.append(f"  L{idx}: " + ", ".join(str(v + 1) for v in level))
+            self._lab4_show("\n".join(lines))
+        except Exception as e:
+            messagebox.showerror("Помилка", str(e))
+
+    def _lab4_reorder(self):
+        try:
+            graph = self._lab4_graph()
+            order = graph.reverse_cuthill_mckee_order()
+            permuted = graph.permute_matrix(order)
+            lower_before, upper_before = graph.bandwidth()
+            lower_after, upper_after = graph.bandwidth(permuted)
+            lines = ["Зведення до стрічкового вигляду методом Reverse Cuthill-McKee\n"]
+            lines.append("Порядок перестановки вершин:")
+            lines.append("  " + " ".join(str(v + 1) for v in order))
+            lines.append(f"Півширина до перестановки: lower={lower_before}, upper={upper_before}")
+            lines.append(f"Півширина після перестановки: lower={lower_after}, upper={upper_after}")
+            lines.append("\nПереставлена матриця A':")
+            lines.append(str(permuted))
+            self._lab4_show("\n".join(lines))
+        except Exception as e:
+            messagebox.showerror("Помилка", str(e))
+
+    def _lab4_solve_full(self):
+        try:
+            a, b = self._lab4_parse_inputs()
+            graph = SparseGraphMatrix(a)
+            info = graph.solve_full(b)
+            lines = ["Розв'язання СЛАР повною матрицею\n"]
+            lines.append(f"Статус: {info['message']}")
+            lines.append(f"rank(A) = {info['rank_a']}, rank([A|b]) = {info['rank_ab']}")
+            if info["status"] == "unique_solution":
+                lines.append("Розв'язок x:")
+                for i in range(info["x"].size):
+                    lines.append(f"  x[{i + 1}] = {info['x'].get(i):.8f}")
+                residual = graph.matrix * info["x"].matrix
+                residual_vec = Vector(data=[residual.get(i, 0) for i in range(residual.rows)]) - b
+                lines.append(f"Норма нев'язки ||Ax-b||: {residual_vec.norm():.3e}")
+            self._lab4_show("\n".join(lines))
+        except Exception as e:
+            messagebox.showerror("Помилка", str(e))
+
+    def _lab4_solve_banded(self):
+        try:
+            a, b = self._lab4_parse_inputs()
+            graph = SparseGraphMatrix(a)
+            info = graph.solve_banded(b)
+            lines = ["Розв'язання СЛАР стрічковою матрицею після RCM-перестановки\n"]
+            lines.append(f"Порядок вершин: {' '.join(str(v + 1) for v in info['order'])}")
+            lines.append(f"Півширина стрічки: lower={info['bandwidth'][0]}, upper={info['bandwidth'][1]}")
+            lines.append(f"Розмір вектора збереження матриці: {len(info['storage_vector'])}")
+            lines.append("Розв'язок x у початковому порядку вершин:")
+            for i in range(info["x"].size):
+                lines.append(f"  x[{i + 1}] = {info['x'].get(i):.8f}")
+            lines.append(f"Норма нев'язки ||Ax-b||: {info['residual_norm']:.3e}")
+            self._lab4_show("\n".join(lines))
+        except Exception as e:
+            messagebox.showerror("Помилка", str(e))
 
     def _load_matrix(self, which):
         filename = filedialog.askopenfilename(
