@@ -1,0 +1,30 @@
+Q: Hello
+A: Hi
+
+Q: How are you?
+A: I'm fine, thank you!
+
+Q: What is Haskell?
+A: A functional programming language
+
+Q: What is a function?
+A: A mapping from inputs to outputs without side effects
+
+Q: What is recursion?
+A: A technique where a function calls itself to solve smaller subproblems
+
+Q: Bye
+A: Goodbye! Have a nice day!
+
+Q: What is lazy evaluation?
+A: It's a feature where code is only evaluated when needed
+
+Q: How to read a file in Haskell?
+A: Using readFile function with IO monad
+
+
+Q: What is a haskell?
+A: It's a type class for containers that can be mapped over using fmap
+
+Q: What is python?
+A: Programming language

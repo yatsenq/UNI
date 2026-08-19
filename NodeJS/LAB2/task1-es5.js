@@ -169,7 +169,7 @@ function demo() {
 	const special = new SpecialSymbolCipherES5()
 	const caseAware = new CaseAwareCipherES5()
 
-	const basePlain = 'hello'
+	const basePlain = 'Hello'
 	const specialPlain = 'hello, world!'
 	const casePlain = 'Code'
 

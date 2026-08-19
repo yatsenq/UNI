@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(runhaskell Main.hs QnA.txt OpenQuestions.txt)",
+      "Bash(runhaskell Main.hs QnA.txt OpenQuestions.txt QnA1.txt OpenQuestions1.txt QnA2.txt OpenQuestions2.txt)"
+    ]
+  }
+}

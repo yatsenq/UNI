@@ -387,88 +387,81 @@ function maxDungeonCrawl(grid, hp, options = {}) {
 
 		var path = [room]
 		var actions = [buildAction(room, { hp: startHp, gold: startGold })]
-		var remaining =
-			totalGold -
-			room.gold(
-				function search(
+		var remaining = totalGold - room.gold
+
+		;(function search(
+			currentIndex,
+			hpCur,
+			goldCur,
+			visitedArr,
+			pathArr,
+			actionsArr,
+			healsUsed,
+		) {
+			var key = currentIndex + '|' + hpCur + '|' + visitedKey(visitedArr)
+			if (!allowHeal) {
+				if (memo[key] !== undefined && memo[key] >= goldCur) return
+				memo[key] = goldCur
+			}
+
+			if (goldCur + remaining <= best.gold) return
+
+			var currentRoom = rooms[currentIndex]
+			if (goldCur > best.gold || (goldCur === best.gold && hpCur > best.hp)) {
+				best = {
+					gold: goldCur,
+					hp: hpCur,
+					entry: { x: pathArr[0].x, y: pathArr[0].y },
+					path: pathArr.map(function (r) {
+						return { x: r.x, y: r.y }
+					}),
+					actions: actionsArr.slice(),
+					healsUsed: healsUsed,
+					exited: true,
+				}
+			}
+
+			if (allowHeal && goldCur >= 100 && hpCur < maxHp) {
+				actionsArr.push(
+					buildHealAction(currentRoom, hpCur, maxHp, goldCur - 100),
+				)
+				search(
 					currentIndex,
-					hpCur,
-					goldCur,
+					maxHp,
+					goldCur - 100,
+					visitedArr,
+					pathArr,
+					actionsArr,
+					healsUsed + 1,
+				)
+				actionsArr.pop()
+			}
+
+			for (var ni = 0; ni < (currentRoom.neighbors || []).length; ni++) {
+				var nextIndex = currentRoom.neighbors[ni]
+				if (visitedArr[nextIndex]) continue
+				var nextRoom = rooms[nextIndex]
+				var nextHp = hpCur - nextRoom.monsters
+				if (nextHp <= 0) continue
+				var nextGold = goldCur + nextRoom.gold
+				var nextRemaining = remaining - nextRoom.gold
+				visitedArr[nextIndex] = 1
+				pathArr.push(nextRoom)
+				actionsArr.push(buildAction(nextRoom, { hp: nextHp, gold: nextGold }))
+				search(
+					nextIndex,
+					nextHp,
+					nextGold,
 					visitedArr,
 					pathArr,
 					actionsArr,
 					healsUsed,
-				) {
-					var key = currentIndex + '|' + hpCur + '|' + visitedKey(visitedArr)
-					if (!allowHeal) {
-						if (memo[key] !== undefined && memo[key] >= goldCur) return
-						memo[key] = goldCur
-					}
-
-					if (goldCur + remaining <= best.gold) return
-
-					var currentRoom = rooms[currentIndex]
-					if (
-						goldCur > best.gold ||
-						(goldCur === best.gold && hpCur > best.hp)
-					) {
-						best = {
-							gold: goldCur,
-							hp: hpCur,
-							entry: { x: pathArr[0].x, y: pathArr[0].y },
-							path: pathArr.map(function (r) {
-								return { x: r.x, y: r.y }
-							}),
-							actions: actionsArr.slice(),
-							healsUsed: healsUsed,
-							exited: true,
-						}
-					}
-
-					if (allowHeal && goldCur >= 100 && hpCur < maxHp) {
-						actionsArr.push(
-							buildHealAction(currentRoom, hpCur, maxHp, goldCur - 100),
-						)
-						search(
-							currentIndex,
-							maxHp,
-							goldCur - 100,
-							visitedArr,
-							pathArr,
-							actionsArr,
-							healsUsed + 1,
-						)
-						actionsArr.pop()
-					}
-
-					for (var ni = 0; ni < (currentRoom.neighbors || []).length; ni++) {
-						var nextIndex = currentRoom.neighbors[ni]
-						if (visitedArr[nextIndex]) continue
-						var nextRoom = rooms[nextIndex]
-						var nextHp = hpCur - nextRoom.monsters
-						if (nextHp <= 0) continue
-						var nextGold = goldCur + nextRoom.gold
-						var nextRemaining = remaining - nextRoom.gold
-						visitedArr[nextIndex] = 1
-						pathArr.push(nextRoom)
-						actionsArr.push(
-							buildAction(nextRoom, { hp: nextHp, gold: nextGold }),
-						)
-						search(
-							nextIndex,
-							nextHp,
-							nextGold,
-							visitedArr,
-							pathArr,
-							actionsArr,
-							healsUsed,
-						)
-						actionsArr.pop()
-						pathArr.pop()
-						visitedArr[nextIndex] = 0
-					}
-				},
-			)(startIndex, startHp, startGold, visited, path, actions, 0)
+				)
+				actionsArr.pop()
+				pathArr.pop()
+				visitedArr[nextIndex] = 0
+			}
+		})(startIndex, startHp, startGold, visited, path, actions, 0)
 	}
 
 	if (best.gold < 0) {
